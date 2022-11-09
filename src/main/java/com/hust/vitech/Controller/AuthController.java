@@ -46,7 +46,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping(value = "/signin", produces = "application/json")
-    public ApiResponse<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ApiResponse<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -67,7 +67,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/signup", produces = "application/json")
-    public ApiResponse<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+    public ApiResponse<User> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
 
         //Check if existed username or email
         if (userRepository.existsByUserName(signupRequest.getUsername())) {
@@ -119,6 +119,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ApiResponse.successWithResult(new MessageResponse("User registered successfully!"));
+        return ApiResponse.successWithResult(user);
     }
 }

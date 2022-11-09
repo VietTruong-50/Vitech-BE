@@ -21,7 +21,7 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public Banner createNewBanner(BannerRequest bannerRequest) {
-        if (bannerRepository.existsByName(bannerRequest.getName())) {
+        if (!bannerRepository.existsByName(bannerRequest.getName())) {
             Banner banner = new Banner();
             return bannerRepository.save(bannerRequest.toBanner(banner));
         }
@@ -36,8 +36,8 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public ResponseEntity<?> deleteBanner(Long id) {
-        return bannerRepository.findById(id).map(
+    public void deleteBanner(Long id) {
+        bannerRepository.findById(id).map(
                 banner -> {
                     bannerRepository.delete(banner);
                     return ResponseEntity.ok().build();
@@ -52,7 +52,7 @@ public class BannerServiceImpl implements BannerService {
 
     @Override
     public Page<Banner> getAllBanner(int size, int page, String sortBy) {
-        Pageable pageable = PageRequest.of(size, page, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return bannerRepository.findAll(pageable);
     }
 }

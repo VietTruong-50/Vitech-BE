@@ -1,6 +1,6 @@
 package com.hust.vitech.Model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +22,7 @@ public class User extends BaseModel{
     private String userName;
 
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "email")

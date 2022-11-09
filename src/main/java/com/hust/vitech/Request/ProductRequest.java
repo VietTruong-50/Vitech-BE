@@ -23,6 +23,8 @@ public class ProductRequest {
 
     private Long category_id;
 
+    private Long brand_id;
+
     public Product toProduct(Product product){
         product.setName(this.getName());
         product.setContent(this.getContent());

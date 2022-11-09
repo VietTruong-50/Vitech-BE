@@ -1,19 +1,18 @@
 package com.hust.vitech.Controller;
 
 import com.hust.vitech.Model.Category;
-import com.hust.vitech.Model.Slider;
 import com.hust.vitech.Request.CategoryRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/api")
 public class CategoryController {
 
@@ -49,7 +48,9 @@ public class CategoryController {
     }
 
     @GetMapping(value = "/categories", produces = "application/json")
-    public ApiResponse<List<Category>> getAllCategory(){
-        return ApiResponse.successWithResult(categoryService.getAllCategory());
+    public ApiResponse<Page<Category>> getAllCategory(@RequestParam int size,
+                                                      @RequestParam int page,
+                                                      @RequestParam String sortBy){
+        return ApiResponse.successWithResult(categoryService.getAllCategory(size, page, sortBy));
     }
 }

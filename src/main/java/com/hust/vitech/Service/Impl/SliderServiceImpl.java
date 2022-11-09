@@ -22,7 +22,7 @@ public class SliderServiceImpl implements SliderService {
 
     @Override
     public Slider createNewSlider(SliderRequest sliderRequest) {
-        if(sliderRepository.existsByName(sliderRequest.getName())){
+        if(!sliderRepository.existsByName(sliderRequest.getName())){
             Slider slider = new Slider();
             return sliderRepository.save(sliderRequest.toSlider(slider));
         }

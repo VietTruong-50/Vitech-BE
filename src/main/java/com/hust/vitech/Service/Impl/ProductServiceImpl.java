@@ -2,6 +2,7 @@ package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
+import com.hust.vitech.Repository.BrandRepository;
 import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Repository.ProductRepository;
 import com.hust.vitech.Request.ProductRequest;
@@ -28,26 +29,33 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private BrandRepository brandRepository;
+
     @Override
     public Product createNewProduct(ProductRequest productRequest) {
+        Product product = new Product();
 
-        if (productRepository.existsByName(productRequest.getName())) {
-            Product product = new Product();
-
-            if (productRequest.getCategory_id() != null) {
-                product.setCategory(
-                        categoryRepository.findById(productRequest.getCategory_id())
-                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
-            }
-
-            return productRepository.save(productRequest.toProduct(product));
+        if (productRequest.getCategory_id() != null) {
+            product.setCategory(
+                    categoryRepository.findById(productRequest.getCategory_id())
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
         }
-        return null;
+
+        if (productRequest.getBrand_id() != null) {
+            product.setBrand(
+                    brandRepository.findById(productRequest.getBrand_id())
+                            .orElseThrow(() -> new ResourceNotFoundException("Brand not found")));
+        }
+
+        return productRepository.save(productRequest.toProduct(product));
+
     }
 
     @Override
     public Product updateProduct(ProductRequest productRequest, Long productId) {
-        Product product = productRepository.findProductById(productId).orElse(null);
+        Product product = productRepository.findProductById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (product != null) {
 
@@ -57,14 +65,20 @@ public class ProductServiceImpl implements ProductService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
             }
 
+            if (productRequest.getBrand_id() != null) {
+                product.setBrand(
+                        brandRepository.findById(productRequest.getBrand_id())
+                                .orElseThrow(() -> new ResourceNotFoundException("Brand not found")));
+            }
+
             return productRepository.save(productRequest.toProduct(product));
         }
         return null;
     }
 
     @Override
-    public ResponseEntity<?> deleteProduct(Long id) {
-        return productRepository.findById(id).map(
+    public void deleteProduct(Long id) {
+        productRepository.findById(id).map(
                 product -> {
                     productRepository.delete(product);
                     return ResponseEntity.ok().build();
@@ -79,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> findAll(int size, int page, String sortBy) {
-        Pageable pageable = PageRequest.of(size, page, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return productRepository.findAll(pageable);
     }
 
