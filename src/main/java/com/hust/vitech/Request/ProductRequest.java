@@ -21,6 +21,8 @@ public class ProductRequest {
 
     private String featureImageName;
 
+    private byte[] featureImageByte;
+
     private Long category_id;
 
     private Long brand_id;
@@ -32,6 +34,7 @@ public class ProductRequest {
         product.setActualPrice(this.getActualPrice());
         product.setProductImages(this.getProductImages());
         product.setQuantity(this.getQuantity());
+        product.setFeatureImageByte(this.getFeatureImageByte());
 
         return product;
     }

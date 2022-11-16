@@ -31,6 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/api-docs.yaml",
             "/swagger-ui/**",
             "/api-docs/**",
+            "/**"
     };
 
     @Autowired

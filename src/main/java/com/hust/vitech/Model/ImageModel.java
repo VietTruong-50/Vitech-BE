@@ -22,14 +22,18 @@ public class ImageModel extends BaseModel{
     @Column(name = "id")
     private Long id;
 
-    @Column(nullable = true, length = 64)
+    @Column(length = 64)
     private String imageName;
+
+    @Column(length = 500000)
+    private byte[] imageByte;
 
     private String type;
 
-    public ImageModel(String imageName, String type){
+    public ImageModel(String imageName, String type, byte[] imageByte){
         this.imageName = imageName;
         this.type = type;
+        this.imageByte = imageByte;
     }
 
     @JsonIgnore

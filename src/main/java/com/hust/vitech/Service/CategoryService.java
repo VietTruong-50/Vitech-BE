@@ -11,6 +11,6 @@ public interface CategoryService {
     Category createNewCategory(CategoryRequest categoryRequest);
     Category updateCategory(Long id, CategoryRequest categoryRequest);
     ResponseEntity<?> deleteCategory(Long id) ;
-
+    Category getCategoryById(Long id);
     Page<Category> getAllCategory(int size, int page, String sortBy);
 }

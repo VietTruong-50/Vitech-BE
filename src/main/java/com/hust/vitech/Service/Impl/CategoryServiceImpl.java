@@ -54,6 +54,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+    }
+
+    @Override
     public Page<Category> getAllCategory(int size, int page, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return categoryRepository.findAll(pageable);

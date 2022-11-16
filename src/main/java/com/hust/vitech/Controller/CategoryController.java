@@ -53,4 +53,9 @@ public class CategoryController {
                                                       @RequestParam String sortBy){
         return ApiResponse.successWithResult(categoryService.getAllCategory(size, page, sortBy));
     }
+
+    @GetMapping(value = "categories/{id}", produces = "application/json")
+    public ApiResponse<Category> getCategoryById(@PathVariable("id") Long id){
+        return ApiResponse.successWithResult(categoryService.getCategoryById(id));
+    }
 }

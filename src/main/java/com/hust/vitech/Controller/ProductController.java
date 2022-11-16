@@ -29,15 +29,17 @@ public class ProductController {
                                                  @RequestPart("imageFiles") MultipartFile[] files
     ) {
         try {
-            productRequest.setProductImages(productService.uploadImage(files));
+            productRequest.setProductImages(productService.uploadImages(files));
             productRequest.setFeatureImageName(featureImage.getOriginalFilename());
+            productRequest.setFeatureImageByte(featureImage.getBytes());
+
             Product product = productService.createNewProduct(productRequest);
 
-            String uploadDir = "/products/" + product.getId() + "/feature_img";
-            FileUploadUtil.saveFile(uploadDir, featureImage.getOriginalFilename(), featureImage);
-
-            uploadDir = "/products/" + product.getId() + "/details";
-            FileUploadUtil.saveFiles(uploadDir, files);
+//            String uploadDir = "/products/" + product.getId() + "/feature_img";
+//            FileUploadUtil.saveFile(uploadDir, featureImage.getOriginalFilename(), featureImage);
+//
+//            uploadDir = "/products/" + product.getId() + "/details";
+//            FileUploadUtil.saveFiles(uploadDir, files);
 
             return ApiResponse.successWithResult(product);
         } catch (IOException e) {
@@ -51,15 +53,17 @@ public class ProductController {
                                               @RequestPart("featureImage") MultipartFile featureImage,
                                               @RequestPart("imageFiles") MultipartFile[] files) {
         try {
-            productRequest.setProductImages(productService.uploadImage(files));
+            productRequest.setProductImages(productService.uploadImages(files));
             productRequest.setFeatureImageName(featureImage.getOriginalFilename());
+            productRequest.setFeatureImageByte(featureImage.getBytes());
+
             Product product = productService.updateProduct(productRequest, productId);
 
-            String uploadDir = "/products/" + product.getId() + "/feature_img";
-            FileUploadUtil.saveFile(uploadDir, featureImage.getOriginalFilename(), featureImage);
-
-            uploadDir = "/products/" + product.getId() + "/details";
-            FileUploadUtil.saveFiles(uploadDir, files);
+//            String uploadDir = "/products/" + product.getId() + "/feature_img";
+//            FileUploadUtil.saveFile(uploadDir, featureImage.getOriginalFilename(), featureImage);
+//
+//            uploadDir = "/products/" + product.getId() + "/details";
+//            FileUploadUtil.saveFiles(uploadDir, files);
 
             return ApiResponse.successWithResult(product);
         } catch (IOException e) {
@@ -92,5 +96,6 @@ public class ProductController {
         productService.deleteProduct(id);
         return ApiResponse.successWithResult(null, "Delete success");
     }
+
 
 }

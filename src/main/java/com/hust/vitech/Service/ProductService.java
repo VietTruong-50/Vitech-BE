@@ -6,6 +6,7 @@ import com.hust.vitech.Request.ProductRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Set;
 
 public interface ProductService {
@@ -19,5 +20,5 @@ public interface ProductService {
 
     Page<Product> findAll(int size, int page, String sortBy);
 
-    Set<ImageModel> uploadImage(MultipartFile[] files);
+    Set<ImageModel> uploadImages(MultipartFile[] files) throws IOException;
 }

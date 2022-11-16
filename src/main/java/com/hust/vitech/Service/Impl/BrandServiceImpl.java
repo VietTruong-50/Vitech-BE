@@ -12,6 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BrandServiceImpl implements BrandService {
     @Autowired
@@ -24,9 +26,14 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public Page<Brand> getAllBrands(int size, int page, String sortBy) {
+    public Page<Brand> getBrandData(int size, int page, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return brandRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Brand> getBrandData() {
+        return brandRepository.findAll();
     }
 
     @Override

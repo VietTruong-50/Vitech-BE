@@ -35,6 +35,9 @@ public class Product extends BaseModel{
     @Column(name = "feature_image_name")
     private String featureImageName;
 
+    @Column(length = 500000)
+    private byte[] featureImageByte;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "product_images",
             joinColumns = @JoinColumn(name = "product_id"),

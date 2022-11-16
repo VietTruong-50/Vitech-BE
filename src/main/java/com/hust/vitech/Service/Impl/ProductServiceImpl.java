@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -97,14 +98,14 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(pageable);
     }
 
-    @Override
-    public Set<ImageModel> uploadImage(MultipartFile[] file) {
+    public Set<ImageModel> uploadImages(MultipartFile[] file) throws IOException {
         Set<ImageModel> imageModels = new HashSet<>();
 
         for (MultipartFile f : file) {
             ImageModel imageModel = new ImageModel(
                     f.getOriginalFilename(),
-                    f.getContentType()
+                    f.getContentType(),
+                    f.getBytes()
             );
 
             imageModels.add(imageModel);
