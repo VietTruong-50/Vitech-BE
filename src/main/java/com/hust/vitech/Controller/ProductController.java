@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -89,6 +90,16 @@ public class ProductController {
         } catch (Exception e) {
             return ApiResponse.failureWithCode("", "Not found", null, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "/products/brands/{brandName}", produces = "application/json")
+    public ApiResponse<List<Product>> findProductsByBrandName(@PathVariable("brandName") String brandName){
+        return ApiResponse.successWithResult(productService.findProductsByBrandName(brandName));
+    }
+
+    @GetMapping(value = "/products/categories/{categoryName}", produces = "application/json")
+    public ApiResponse<List<Product>> findProductsByCategoryName(@PathVariable("categoryName") String categoryName){
+        return ApiResponse.successWithResult(productService.findProductsByCategoryName(categoryName));
     }
 
     @DeleteMapping(value = "/products/{id}", produces = "application/json")

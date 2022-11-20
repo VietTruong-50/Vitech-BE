@@ -11,6 +11,10 @@ public class ProductRequest {
 
     private String name;
 
+    private String productCode;
+
+    private String parameters;
+
     private String content;
 
     private Double actualPrice;
@@ -29,6 +33,8 @@ public class ProductRequest {
 
     public Product toProduct(Product product){
         product.setName(this.getName());
+        product.setProductCode(this.getProductCode());
+        product.setParameters(this.getParameters());
         product.setContent(this.getContent());
         product.setFeatureImageName(this.getFeatureImageName());
         product.setActualPrice(this.getActualPrice());

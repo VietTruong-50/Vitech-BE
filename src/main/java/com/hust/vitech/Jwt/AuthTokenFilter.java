@@ -1,6 +1,5 @@
 package com.hust.vitech.Jwt;
 
-import com.hust.vitech.Repository.UserRepository;
 import com.hust.vitech.Service.Impl.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

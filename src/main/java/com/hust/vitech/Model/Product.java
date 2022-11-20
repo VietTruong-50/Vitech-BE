@@ -25,6 +25,11 @@ public class Product extends BaseModel{
 
     private String name;
 
+    @Column(length = 1000)
+    private String productCode;
+
+    private String parameters;
+
     private String content;
 
     private int quantity;

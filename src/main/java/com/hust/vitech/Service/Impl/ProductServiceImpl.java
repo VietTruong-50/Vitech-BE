@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -112,5 +113,15 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return imageModels;
+    }
+
+    @Override
+    public List<Product> findProductsByBrandName(String brandName) {
+        return productRepository.findTop4ByBrand_BrandName(brandName);
+    }
+
+    @Override
+    public List<Product> findProductsByCategoryName(String categoryName) {
+        return productRepository.findTop4ByCategory_Name(categoryName);
     }
 }
