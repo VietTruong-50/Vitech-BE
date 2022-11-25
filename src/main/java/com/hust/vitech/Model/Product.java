@@ -14,8 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
-@SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
-@Where(clause = "deleted=false")
+//@SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
+//@Where(clause = "deleted=false")
 public class Product extends BaseModel{
 
     @Id
@@ -57,4 +57,8 @@ public class Product extends BaseModel{
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
+
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    private Set<CartItem> cartItems;
 }

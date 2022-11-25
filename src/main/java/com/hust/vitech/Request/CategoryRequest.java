@@ -9,5 +9,7 @@ public class CategoryRequest {
 
     private String description;
 
+    private byte[] categoryImageByte;
+
     private Long parent_id;
 }

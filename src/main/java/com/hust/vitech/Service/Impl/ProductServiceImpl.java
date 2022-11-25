@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(ProductRequest productRequest, Long productId) {
-        Product product = productRepository.findProductById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (product != null) {
@@ -123,5 +123,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findProductsByCategoryName(String categoryName) {
         return productRepository.findTop4ByCategory_Name(categoryName);
+    }
+
+    @Override
+    public Page<Product> findAllByCategoryName(String categoryName, int size, int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return productRepository.findAllByCategoryName(pageable, categoryName);
+    }
+
+    @Override
+    public Page<Product> findAllByBrandName(String brandName, int size, int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return productRepository.findAllByBrandBrandName(pageable, brandName);
     }
 }

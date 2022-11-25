@@ -2,6 +2,7 @@ package com.hust.vitech.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -35,6 +36,11 @@ public class User extends BaseModel{
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "shopping_session_id", referencedColumnName = "id")
+    @JsonIgnore
+    private ShoppingSession shoppingSession;
 
     public User(String userName, String password, String email){
         this.userName = userName;

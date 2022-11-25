@@ -21,6 +21,9 @@ public class Category extends BaseModel{
 
     private String description;
 
+    @Column(length = 500000)
+    private byte[] categoryImageByte;
+
     private Long parent_id;
 
     @JsonIgnore

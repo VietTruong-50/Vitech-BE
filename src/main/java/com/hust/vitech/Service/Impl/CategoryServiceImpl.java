@@ -13,8 +13,6 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -27,6 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setName(categoryRequest.getName());
             category.setDescription(categoryRequest.getDescription());
             category.setParent_id(categoryRequest.getParent_id());
+            category.setCategoryImageByte(categoryRequest.getCategoryImageByte());
 
             return categoryRepository.save(category);
     }
@@ -39,6 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(categoryRequest.getName());
         category.setDescription(categoryRequest.getDescription());
         category.setParent_id(categoryRequest.getParent_id());
+        category.setCategoryImageByte(categoryRequest.getCategoryImageByte());
 
         return categoryRepository.save(category);
     }

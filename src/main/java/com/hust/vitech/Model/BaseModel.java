@@ -39,6 +39,6 @@ public class BaseModel implements Serializable {
     @Column(name = "updated_by")
     private Long updatedBy;
 
-    @JsonIgnore
-    private boolean deleted = Boolean.FALSE;
+//    @JsonIgnore
+//    private boolean deleted = Boolean.FALSE;
 }
