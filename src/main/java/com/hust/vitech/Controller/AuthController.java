@@ -24,9 +24,19 @@ public class AuthController {
         return ApiResponse.successWithResult(userService.login(loginRequest));
     }
 
-    @PostMapping(value = "/signup", produces = "application/json")
-    public ApiResponse<User> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+    @PostMapping(value = "/register", produces = "application/json")
+    public ApiResponse<User> register(@Valid @RequestBody SignupRequest signupRequest) {
         //Check if existed username or email
         return userService.register(signupRequest);
     }
+
+//    @PostMapping(value = "/user/signin", produces = "application/json")
+//    public ApiResponse<JwtResponse> authenticateCustomer(@Valid @RequestBody LoginRequest loginRequest) {
+//        return ApiResponse.successWithResult(customerService.login(loginRequest));
+//    }
+//
+//    @PostMapping(value = "/user/register", produces = "application/json")
+//    public ApiResponse<User> register(@Valid @RequestBody SignupRequest signupRequest) {
+//        return customerService.register(signupRequest);
+//    }
 }

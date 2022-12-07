@@ -30,9 +30,9 @@ public class BrandController {
         return ApiResponse.successWithResult(brandService.getBrandData(size, page, sortBy));
     }
 
-    @GetMapping(value = "brands/all", produces = "application/json")
-    public ApiResponse<List<Brand>> getBrandData() {
-        return ApiResponse.successWithResult(brandService.getBrandData());
+    @GetMapping(value = "categories/{cateId}/brands", produces = "application/json")
+    public ApiResponse<List<Brand>> getBrandDataByCategory(@PathVariable("cateId") Long categoryId) {
+        return ApiResponse.successWithResult(brandService.getBrandDataByCategory(categoryId));
     }
 
     @GetMapping(value = "brands/{id}", produces = "application/json")

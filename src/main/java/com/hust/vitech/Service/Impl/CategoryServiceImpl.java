@@ -24,7 +24,6 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = new Category();
             category.setName(categoryRequest.getName());
             category.setDescription(categoryRequest.getDescription());
-            category.setParent_id(categoryRequest.getParent_id());
             category.setCategoryImageByte(categoryRequest.getCategoryImageByte());
 
             return categoryRepository.save(category);
@@ -37,7 +36,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setName(categoryRequest.getName());
         category.setDescription(categoryRequest.getDescription());
-        category.setParent_id(categoryRequest.getParent_id());
         category.setCategoryImageByte(categoryRequest.getCategoryImageByte());
 
         return categoryRepository.save(category);

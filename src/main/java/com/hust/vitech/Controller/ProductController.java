@@ -93,13 +93,16 @@ public class ProductController {
     }
 
     @GetMapping(value = "/products/brands/{brandName}", produces = "application/json")
-    public ApiResponse<List<Product>> findProductsByBrandName(@PathVariable("brandName") String brandName){
+    public ApiResponse<List<Product>> findProductsByBrandName(@PathVariable("brandName") String brandName) {
         return ApiResponse.successWithResult(productService.findProductsByBrandName(brandName));
     }
 
     @GetMapping(value = "/products/categories/{categoryName}", produces = "application/json")
-    public ApiResponse<List<Product>> findProductsByCategoryName(@PathVariable("categoryName") String categoryName){
-        return ApiResponse.successWithResult(productService.findProductsByCategoryName(categoryName));
+    public ApiResponse<Page<Product>> findProductsByCategoryName(@PathVariable("categoryName") String categoryName,
+                                                                 @RequestParam int size,
+                                                                 @RequestParam int page,
+                                                                 @RequestParam String sortBy) {
+        return ApiResponse.successWithResult(productService.findProductsByCategoryName(categoryName, size, page, sortBy));
     }
 
     @DeleteMapping(value = "/products/{id}", produces = "application/json")

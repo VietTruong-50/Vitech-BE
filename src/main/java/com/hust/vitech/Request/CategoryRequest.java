@@ -11,5 +11,5 @@ public class CategoryRequest {
 
     private byte[] categoryImageByte;
 
-    private Long parent_id;
+//    private Long parentId;
 }

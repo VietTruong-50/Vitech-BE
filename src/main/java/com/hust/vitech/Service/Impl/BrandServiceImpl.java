@@ -2,6 +2,7 @@ package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.Brand;
 import com.hust.vitech.Repository.BrandRepository;
+import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Request.BrandRequest;
 import com.hust.vitech.Service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,19 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Override
     public Brand createNewBrand(BrandRequest brandRequest) {
         Brand brand = new Brand();
+
+        if (brandRequest.getCategoryId() != null) {
+            brand.setCategory(
+                    categoryRepository.findById(brandRequest.getCategoryId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+        }
+
         return brandRepository.save(brandRequest.toBrand(brand));
     }
 
@@ -37,9 +48,20 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    public List<Brand> getBrandDataByCategory(Long categoryId) {
+        return brandRepository.findAllByCategoryId(categoryId);
+    }
+
+    @Override
     public Brand updateBrand(Long id, BrandRequest brandRequest) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Brand not found"));
+
+        if (brandRequest.getCategoryId() != null) {
+            brand.setCategory(
+                    categoryRepository.findById(brandRequest.getCategoryId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+        }
 
         return brandRepository.save(brandRequest.toBrand(brand));
     }

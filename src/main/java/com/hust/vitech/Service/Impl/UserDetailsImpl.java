@@ -1,5 +1,6 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

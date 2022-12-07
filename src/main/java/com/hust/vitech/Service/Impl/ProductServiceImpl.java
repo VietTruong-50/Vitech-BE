@@ -38,11 +38,11 @@ public class ProductServiceImpl implements ProductService {
     public Product createNewProduct(ProductRequest productRequest) {
         Product product = new Product();
 
-        if (productRequest.getCategory_id() != null) {
-            product.setCategory(
-                    categoryRepository.findById(productRequest.getCategory_id())
-                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
-        }
+//        if (productRequest.getCategory_id() != null) {
+//            product.setCategory(
+//                    categoryRepository.findById(productRequest.getCategory_id())
+//                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+//        }
 
         if (productRequest.getBrand_id() != null) {
             product.setBrand(
@@ -61,11 +61,11 @@ public class ProductServiceImpl implements ProductService {
 
         if (product != null) {
 
-            if (productRequest.getCategory_id() != null) {
-                product.setCategory(
-                        categoryRepository.findById(productRequest.getCategory_id())
-                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
-            }
+//            if (productRequest.getCategory_id() != null) {
+//                product.setCategory(
+//                        categoryRepository.findById(productRequest.getCategory_id())
+//                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+//            }
 
             if (productRequest.getBrand_id() != null) {
                 product.setBrand(
@@ -117,18 +117,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findProductsByBrandName(String brandName) {
-        return productRepository.findTop4ByBrand_BrandName(brandName);
+//        return productRepository.findTop4ByBrand_BrandName(brandName);
+        return null;
     }
 
     @Override
-    public List<Product> findProductsByCategoryName(String categoryName) {
-        return productRepository.findTop4ByCategory_Name(categoryName);
+    public Page<Product> findProductsByCategoryName(String categoryName, int size, int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return productRepository.findAllByCategoryName(pageable, categoryName);
     }
 
     @Override
     public Page<Product> findAllByCategoryName(String categoryName, int size, int page, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return productRepository.findAllByCategoryName(pageable, categoryName);
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+//        return productRepository.findAllByCategoryName(pageable, categoryName);
+        return null;
     }
 
     @Override

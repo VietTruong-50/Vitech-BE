@@ -25,10 +25,17 @@ public class CartServiceImpl implements CartService {
     private CartItemRepository cartItemRepository;
 
     @Override
-    public void addItemToCart(CartItemRequest cartItemRequest) {
+    public ShoppingSession createShoppingSession() {
+        ShoppingSession shoppingSession = new ShoppingSession();
+        return shoppingSessionRepository.save(shoppingSession);
+    }
+
+    @Override
+    public ShoppingSession addItemToCart(CartItemRequest cartItemRequest) {
+        ShoppingSession shoppingSession = null;
 
         CartItem cartItem = cartItemRepository
-                .findByProductIdAndShoppingSessionId(cartItemRequest.getProductId(), cartItemRequest.getShopping_session_id())
+                .findByProductIdAndShoppingSessionId(cartItemRequest.getProductId(), cartItemRequest.getShoppingSessionId())
                 .orElse(null);
 
         if (cartItem != null) {
@@ -38,17 +45,28 @@ public class CartServiceImpl implements CartService {
         } else {
             cartItem = new CartItem();
 
-            cartItem.setShoppingSession(shoppingSessionRepository
-                    .findById(cartItemRequest.getShopping_session_id())
-                    .orElseThrow(() -> new ResourceNotFoundException("Session not found")));
+            if (!shoppingSessionRepository
+                    .existsById(cartItemRequest.getShoppingSessionId())) {
+                shoppingSession = createShoppingSession();
+                cartItem.setShoppingSession(shoppingSession);
+            } else {
+                shoppingSession = shoppingSessionRepository
+                        .findById(cartItemRequest.getShoppingSessionId()).orElse(null);
+                cartItem.setShoppingSession(shoppingSession);
+            }
 
             cartItem.setProduct(productRepository.findById(cartItemRequest.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Session not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found")));
 
             cartItem.setQuantity(cartItemRequest.getQuantity());
 
             cartItemRepository.save(cartItem);
         }
+        return shoppingSession;
+    }
+
+    @Override
+    public void updateCart(Long currentSessionId, Long itemId, int quantity) {
 
     }
 
@@ -71,7 +89,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Long getTotalValues(Long shoppingSessionId) {
-        return shoppingSessionRepository.getTotalValues(shoppingSessionId);
+    public Double getTotalValues(Long shoppingSessionId) {
+        Set<CartItem> cartItems = cartItemRepository.findAllByShoppingSessionId(shoppingSessionId);
+
+        double sum = 0d;
+
+        for (CartItem c : cartItems) {
+            sum += c.getProduct().getActualPrice() * c.getQuantity();
+        }
+
+        return sum;
     }
 }

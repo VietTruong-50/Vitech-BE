@@ -19,6 +19,8 @@ public class ProductRequest {
 
     private Double actualPrice;
 
+    private Double discountPrice;
+
     private int quantity;
 
     private Set<ImageModel> productImages;
@@ -27,7 +29,7 @@ public class ProductRequest {
 
     private byte[] featureImageByte;
 
-    private Long category_id;
+//    private Long category_id;
 
     private Long brand_id;
 
@@ -41,6 +43,7 @@ public class ProductRequest {
         product.setProductImages(this.getProductImages());
         product.setQuantity(this.getQuantity());
         product.setFeatureImageByte(this.getFeatureImageByte());
+        product.setDiscountPrice(this.getDiscountPrice());
 
         return product;
     }

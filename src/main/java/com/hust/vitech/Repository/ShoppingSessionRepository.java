@@ -12,6 +12,6 @@ public interface ShoppingSessionRepository extends JpaRepository<ShoppingSession
             "JOIN Product p ON p.id = c.product.id " +
             "JOIN ShoppingSession s ON s.id = c.shoppingSession.id " +
             "WHERE c.shoppingSession.id = ?1")
-    Long getTotalValues(Long shoppingSessionId);
+    Double getTotalValues(Long shoppingSessionId);
 
 }

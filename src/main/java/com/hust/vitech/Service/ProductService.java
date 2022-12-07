@@ -24,9 +24,11 @@ public interface ProductService {
     Set<ImageModel> uploadImages(MultipartFile[] files) throws IOException;
 
     List<Product> findProductsByBrandName(String brandName);
-    List<Product> findProductsByCategoryName(String categoryName);
+
+    Page<Product> findProductsByCategoryName(String categoryName, int size, int page, String sortBy);
 
     Page<Product> findAllByCategoryName(String categoryName, int size, int page, String sortBy);
 
     Page<Product> findAllByBrandName(String brandName, int size, int page, String sortBy);
+
 }
