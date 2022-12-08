@@ -37,6 +37,9 @@ public class Product extends BaseModel{
     @Column(name = "actual_price")
     private Double actualPrice;
 
+    @Column(name = "discount_price")
+    private Double discountPrice;
+
     @Column(name = "feature_image_name")
     private String featureImageName;
 
@@ -50,15 +53,15 @@ public class Product extends BaseModel{
     )
     private Set<ImageModel> productImages = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "wishListProducts")
+    private Set<User> users = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @OneToMany(mappedBy = "product")
     @JsonIgnore
+    @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems;
 }

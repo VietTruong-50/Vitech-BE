@@ -19,7 +19,7 @@ public class CartItem extends BaseModel{
     @JoinColumn(name = "product_id")
     private Product product;
 
-    private Long quantity;
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "shopping_session_id")

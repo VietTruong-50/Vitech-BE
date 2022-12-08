@@ -24,38 +24,40 @@ public class UserController {
     @GetMapping(value = "/users", produces = "application/json")
     public ApiResponse<Page<User>> getAllUsers(@RequestParam int size,
                                                @RequestParam int page,
-                                               @RequestParam String sortBy){
+                                               @RequestParam String sortBy) {
         return ApiResponse.successWithResult(userService.getAllUser(size, page, sortBy));
     }
 
-    @GetMapping(value = "/account/{id}", produces = "application/json")
-    public ApiResponse<User> getUserById(@PathVariable("id") Long id){
-        return ApiResponse.successWithResult(userService.getUserById(id));
+    @GetMapping(value = "/account", produces = "application/json")
+    public ApiResponse<User> getCurrentUser() {
+        return ApiResponse.successWithResult(userService.getCurrentUser());
     }
 
     @GetMapping(value = "/cart/{id}", produces = "application/json")
-    public ApiResponse<ShoppingSession> getShoppingCart(@PathVariable("id") Long id){
+    public ApiResponse<ShoppingSession> getShoppingCart(@PathVariable("id") Long id) {
         return ApiResponse.successWithResult(cartService.getShoppingCart(id));
     }
 
     @GetMapping(value = "/cart/{id}/total", produces = "application/json")
-    public ApiResponse<Long> getTotalValues(@PathVariable("id") Long id){
+    public ApiResponse<Double> getTotalValues(@PathVariable("id") Long id) {
         return ApiResponse.successWithResult(cartService.getTotalValues(id));
     }
 
     @PostMapping(value = "/cart", produces = "application/json")
-    public ApiResponse<?> addItemToCart(@RequestBody CartItemRequest cartItemRequest) {
+    public ApiResponse<ShoppingSession> addItemToCart(@RequestBody CartItemRequest cartItemRequest) {
         try {
-            cartService.addItemToCart(cartItemRequest);
+            return ApiResponse.
+                    successWithResult(cartService.addItemToCart(cartItemRequest),
+                            "Add 1 item to shopping cart");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ApiResponse.successWithResult("Add 1 item to shopping cart");
+        return null;
     }
 
     @DeleteMapping(value = "/cart/{id}/product/{productId}", produces = "application/json")
     public ApiResponse<?> removeItemFromCart(@PathVariable("id") Long shoppingSessionId,
-                                             @PathVariable("productId") Long productId){
+                                             @PathVariable("productId") Long productId) {
         cartService.removeItemFromCart(shoppingSessionId, productId);
         return ApiResponse.successWithResult("Remove 1 item from shopping cart");
     }

@@ -9,6 +9,8 @@ public class BrandRequest {
 
     private String description;
 
+    private Long categoryId;
+
     public Brand toBrand(Brand brand){
         brand.setBrandName(this.getBrandName());
         brand.setDescription(this.getDescription());

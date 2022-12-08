@@ -1,15 +1,11 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Jwt.JwtUtils;
-import com.hust.vitech.Model.CartItem;
 import com.hust.vitech.Model.Role;
-import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Model.User;
-import com.hust.vitech.Repository.CartItemRepository;
 import com.hust.vitech.Repository.RoleRepository;
 import com.hust.vitech.Repository.ShoppingSessionRepository;
 import com.hust.vitech.Repository.UserRepository;
-import com.hust.vitech.Request.CartItemRequest;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.SignupRequest;
 import com.hust.vitech.Response.ApiResponse;
@@ -26,12 +22,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ShoppingSessionRepository shoppingSessionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -62,14 +60,23 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         //Get token
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
+
+        Optional<User> user = userRepository.findUserByUserName(userDetails.getUsername());
+
+        if(user.isPresent() && Objects.equals(roles.get(0), "ROLE_USER")) {
+            user.get().setShoppingSession(
+                    shoppingSessionRepository.findById(loginRequest.getShoppingSessionId()).orElse(null)
+            );
+
+            userRepository.save(user.get());
+        }
 
         return new JwtResponse(jwt,
                 userDetails.getId(),
@@ -98,7 +105,7 @@ public class UserServiceImpl implements UserService {
 
         //Add roles to user
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName("ROLE_USER")
+            Role userRole = roleRepository.findByName("ROLE_CUSTOMER")
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
@@ -116,7 +123,7 @@ public class UserServiceImpl implements UserService {
                                 roles.add(modRole);
                             }
                             default -> {
-                                Role userRole = roleRepository.findByName("ROLE_USER")
+                                Role userRole = roleRepository.findByName("ROLE_CUSTOMER")
                                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                                 roles.add(userRole);
                             }
@@ -126,14 +133,16 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRoles(roles);
-        user.setShoppingSession(new ShoppingSession());
 
         return ApiResponse.successWithResult(userRepository.save(user));
     }
 
+
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return userRepository.findUserByUserName(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

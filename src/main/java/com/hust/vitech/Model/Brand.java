@@ -1,8 +1,11 @@
 package com.hust.vitech.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -17,4 +20,12 @@ public class Brand extends BaseModel{
     private String brandName;
 
     private String description;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "brand")
+    private Set<Product> products = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

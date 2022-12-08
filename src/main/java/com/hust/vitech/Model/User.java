@@ -1,8 +1,8 @@
 package com.hust.vitech.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hust.vitech.Enum.GenderEnum;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -28,6 +28,17 @@ public class User extends BaseModel{
 
     @Column(name = "email")
     private String email;
+
+    private GenderEnum genderEnum;
+
+    private String address;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "wishlist_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> wishListProducts;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

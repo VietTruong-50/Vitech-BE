@@ -7,7 +7,7 @@ public class CartItemRequest {
 
     private Long productId;
 
-    private Long quantity;
+    private int quantity;
 
-    private Long shopping_session_id;
+    private Long shoppingSessionId;
 }

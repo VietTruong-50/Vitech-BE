@@ -24,9 +24,7 @@ public class Category extends BaseModel{
     @Column(length = 500000)
     private byte[] categoryImageByte;
 
-    private Long parent_id;
-
     @JsonIgnore
     @OneToMany(mappedBy = "category")
-    private Set<Product> products = new HashSet<>();
+    private Set<Brand> brands = new HashSet<>();
 }
