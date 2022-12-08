@@ -33,13 +33,6 @@ public class User extends BaseModel{
 
     private String address;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "wishlist_products",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> wishListProducts;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
@@ -47,11 +40,6 @@ public class User extends BaseModel{
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "shopping_session_id", referencedColumnName = "id")
-    @JsonIgnore
-    private ShoppingSession shoppingSession;
 
     public User(String userName, String password, String email){
         this.userName = userName;

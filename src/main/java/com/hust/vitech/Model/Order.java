@@ -17,8 +17,8 @@ public class Order {
     private String orderCode;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     private Double total;
 

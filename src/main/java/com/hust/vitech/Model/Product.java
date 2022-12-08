@@ -55,7 +55,7 @@ public class Product extends BaseModel{
 
     @JsonIgnore
     @ManyToMany(mappedBy = "wishListProducts")
-    private Set<User> users = new HashSet<>();
+    private Set<Customer> customers = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "brand_id")

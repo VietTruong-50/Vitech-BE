@@ -1,7 +1,9 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.User;
+import com.hust.vitech.Repository.CustomerRepository;
 import com.hust.vitech.Repository.ProductRepository;
 import com.hust.vitech.Repository.UserRepository;
 import com.hust.vitech.Service.WishlistService;
@@ -16,7 +18,7 @@ import java.util.Set;
 @Service
 public class WishlistServiceImpl implements WishlistService {
     @Autowired
-    private UserRepository userRepository;
+    private CustomerRepository userRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -24,13 +26,13 @@ public class WishlistServiceImpl implements WishlistService {
     @Override
     public void addToWishlist(Long productId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepository.findUserByUserName(authentication.getName()).ifPresent(user -> {
+        userRepository.findCustomerByUserName(authentication.getName()).ifPresent(user -> {
             Optional<Product> product = productRepository.findById(productId);
 
             if (product.isPresent()) {
                 user.getWishListProducts().add(product.get());
 
-                product.get().getUsers().add(user);
+                product.get().getCustomers().add(user);
 
                 userRepository.save(user);
             }
@@ -40,13 +42,13 @@ public class WishlistServiceImpl implements WishlistService {
     @Override
     public void removeFromWishlist(Long productId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepository.findUserByUserName(authentication.getName()).ifPresent(user -> {
+        userRepository.findCustomerByUserName(authentication.getName()).ifPresent(user -> {
             Optional<Product> product = productRepository.findById(productId);
 
             if (product.isPresent()) {
                 user.getWishListProducts().remove(product.get());
 
-                product.get().getUsers().remove(user);
+                product.get().getCustomers().remove(user);
 
                 userRepository.save(user);
             }
@@ -56,8 +58,8 @@ public class WishlistServiceImpl implements WishlistService {
     @Override
     public Set<Product> getWishlist() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findUserByUserName(authentication.getName());
+        Optional<Customer> user = userRepository.findCustomerByUserName(authentication.getName());
 
-        return user.map(User::getWishListProducts).orElse(null);
+        return user.map(Customer::getWishListProducts).orElse(null);
     }
 }

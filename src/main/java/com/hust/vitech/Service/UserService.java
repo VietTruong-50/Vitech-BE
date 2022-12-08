@@ -12,7 +12,7 @@ public interface UserService {
 
     JwtResponse login(LoginRequest loginRequest);
 
-    ApiResponse<User> register(SignupRequest signupRequest);
+    ApiResponse<?> register(SignupRequest signupRequest);
 
     User getCurrentUser();
 }

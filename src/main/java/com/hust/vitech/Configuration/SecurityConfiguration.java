@@ -26,12 +26,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final String[] publicEndpoints = {
-            "/api/**",
             "/api-docs",
             "/api-docs.yaml",
             "/swagger-ui/**",
-            "/api-docs/**",
-            "/**"
+            "/api-docs/**"
     };
 
     @Autowired

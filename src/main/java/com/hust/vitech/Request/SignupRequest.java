@@ -20,4 +20,6 @@ public class SignupRequest {
     private String email;
 
     private Set<String> roles;
+
+    private boolean isCustomer;
 }

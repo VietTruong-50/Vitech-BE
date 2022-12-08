@@ -1,10 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Enum.OrderStatusEnum;
-import com.hust.vitech.Model.CartItem;
-import com.hust.vitech.Model.Order;
-import com.hust.vitech.Model.OrderDetail;
-import com.hust.vitech.Model.User;
+import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.*;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Service.OrderService;
@@ -36,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private CustomerRepository userRepository;
 
     @Override
     public Order createOrder(OrderRequest orderRequest) {
@@ -45,16 +42,16 @@ public class OrderServiceImpl implements OrderService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
 
-        User user = userRepository.findUserByUserName(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Customer customer = userRepository.findCustomerByUserName(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         order.setOrderCode(orderRequest.getOrderCode());
         order.setShippingMethod(shippingMethodRepository
                 .findById(orderRequest.getShippingMethodId()).orElse(null));
-        order.setUser(user);
+        order.setCustomer(customer);
         order.setStatus(orderRequest.getOrderStatusEnum());
 
         Set<CartItem> cartItems = cartItemRepository
-                .findAllByShoppingSessionId(user.getShoppingSession().getId());
+                .findAllByShoppingSessionId(customer.getShoppingSession().getId());
 
         if (!cartItems.isEmpty()) {
             cartItems.forEach(item ->
@@ -64,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
                                     item.getQuantity(),
                                     item.getProduct().getActualPrice())));
         }
-        order.setTotal(shoppingSessionRepository.getTotalValues(user.getShoppingSession().getId()));
+        order.setTotal(shoppingSessionRepository.getTotalValues(customer.getShoppingSession().getId()));
 
         return orderRepository.save(order);
     }
