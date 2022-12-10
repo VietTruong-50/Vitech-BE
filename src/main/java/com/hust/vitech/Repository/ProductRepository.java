@@ -18,28 +18,28 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //    List<Product> findTop4ByCategory_Name(String categoryName);
 
     //Loc san pham cung phan loai
-    @Query("SELECT p FROM Product p JOIN Brand b ON b.id = p.brand.id " +
+    @Query("SELECT p FROM Product p JOIN SubCategory b ON b.id = p.subCategory.id " +
             "JOIN Category c ON c.id = b.category.id " +
             "WHERE c.name = ?1")
     Page<Product> findAllByCategoryName(Pageable pageable, String categoryName);
 
     //Tim san pham
     @Query(value = "SELECT * FROM products p " +
-            "JOIN brands b ON b.id = p.brand_id " +
+            "JOIN sub_categories b ON b.id = p.subCate_id " +
             "JOIN categories c ON c.id = b.category_id " +
             "WHERE (c.name REGEXP ?1) AND (p.name REGEXP ?2 " +
             "OR p.product_code REGEXP ?2 " +
-            "OR b.brand_name REGEXP ?2)", nativeQuery = true)
+            "OR b.sub_cate_name REGEXP ?2)", nativeQuery = true)
     Page<Product> searchProduct(Pageable pageable, Long categoryId, String textSearch);
 
     //Tim tat ca sp cung hang
-    Page<Product> findAllByBrandBrandName(Pageable pageable, String brandName);
+    Page<Product> findAllBySubCategory_SubCateName(Pageable pageable, String cateName);
 
     //Xem chi tiet san pham
     Product findProductByProductCode(String code);
 
     //Cac san pham lien quan
-    List<Product> findTop5ByBrand_BrandName(String brandName);
+    List<Product> findTop5BySubCategory_SubCateName(String brandName);
 
     @Query("SELECT p FROM Product p WHERE p.actualPrice BETWEEN ?1 AND ?2")
     Page<Product> findAllByActualPriceBetween2Values(Pageable pageable, Double firstPrice, Double secondPrice);

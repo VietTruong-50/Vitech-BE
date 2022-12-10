@@ -32,6 +32,8 @@ public class User extends BaseModel{
     private GenderEnum genderEnum;
 
     private String address;
+    @Column(name = "salary", columnDefinition = "0")
+    private Double salary;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

@@ -10,6 +10,7 @@ import com.hust.vitech.Repository.ShoppingSessionRepository;
 import com.hust.vitech.Repository.UserRepository;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.SignupRequest;
+import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Response.JwtResponse;
 import com.hust.vitech.Response.MessageResponse;
@@ -73,15 +74,15 @@ public class UserServiceImpl implements UserService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
 
-//        Optional<User> user = userRepository.findUserByUserName(userDetails.getUsername());
-//
-//        if (user.isPresent() && Objects.equals(roles.get(0), "ROLE_USER")) {
-//            user.get().setShoppingSession(
-//                    shoppingSessionRepository.findById(loginRequest.getShoppingSessionId()).orElse(null)
-//            );
-//
-//            userRepository.save(user.get());
-//        }
+        Optional<Customer> customer = customerRepository.findCustomerByUserName(userDetails.getUsername());
+
+        if (customer.isPresent() && Objects.equals(roles.get(0), "ROLE_CUSTOMER")) {
+            customer.get().setShoppingSession(
+                    shoppingSessionRepository.findById(loginRequest.getShoppingSessionId()).orElse(null)
+            );
+
+            customerRepository.save(customer.get());
+        }
 
         return new JwtResponse(jwt,
                 userDetails.getId(),
@@ -123,15 +124,10 @@ public class UserServiceImpl implements UserService {
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                                     roles.add(adminRole);
                                 }
-                                case "mod" -> {
+                                default -> {
                                     Role modRole = roleRepository.findByName("ROLE_MODERATOR")
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                                     roles.add(modRole);
-                                }
-                                default -> {
-                                    Role userRole = roleRepository.findByName("ROLE_CUSTOMER")
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                    roles.add(userRole);
                                 }
                             }
                         }
@@ -168,5 +164,43 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findUserByUserName(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public User updateUser(Long userId, UserRequest userRequest) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isPresent()) {
+            user.get().setUserName(userRequest.getUserName());
+            user.get().setPassword(userRequest.getPassword());
+            user.get().setEmail(userRequest.getEmail());
+            user.get().setAddress(userRequest.getAddress());
+            user.get().setSalary(userRequest.getSalary());
+
+            Set<Role> roles = new HashSet<>();
+
+            userRequest.getRoles().forEach(role -> {
+
+                if (role.equals("admin")) {
+                    Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
+                } else {
+                    Role modRole = roleRepository.findByName("ROLE_MODERATOR")
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(modRole);
+                }
+            });
+
+            user.get().setRoles(roles);
+
+            return userRepository.save(user.get());
+        }
+        return null;
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

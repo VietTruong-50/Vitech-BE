@@ -22,7 +22,7 @@ public class ImageModel extends BaseModel{
     @Column(name = "id")
     private Long id;
 
-    @Column(length = 64)
+    @Column(length = 255)
     private String imageName;
 
     @Column(length = 500000)

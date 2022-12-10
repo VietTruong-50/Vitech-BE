@@ -1,6 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.CartItem;
+import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Repository.CartItemRepository;
 import com.hust.vitech.Repository.ProductRepository;
@@ -44,21 +45,21 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.save(cartItem);
         } else {
             cartItem = new CartItem();
+            Product product = productRepository.findById(cartItemRequest.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
             if (!shoppingSessionRepository
                     .existsById(cartItemRequest.getShoppingSessionId())) {
                 shoppingSession = createShoppingSession();
-                cartItem.setShoppingSession(shoppingSession);
             } else {
                 shoppingSession = shoppingSessionRepository
                         .findById(cartItemRequest.getShoppingSessionId()).orElse(null);
-                cartItem.setShoppingSession(shoppingSession);
             }
 
-            cartItem.setProduct(productRepository.findById(cartItemRequest.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found")));
-
+            cartItem.setProduct(product);
+            cartItem.setShoppingSession(shoppingSession);
             cartItem.setQuantity(cartItemRequest.getQuantity());
+            cartItem.setItemPrice(product.getActualPrice());
 
             cartItemRepository.save(cartItem);
         }

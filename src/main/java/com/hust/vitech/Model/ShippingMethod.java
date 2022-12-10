@@ -13,4 +13,6 @@ public class ShippingMethod {
     private Long id;
 
     private String shippingMethod;
+
+    private Double price;
 }

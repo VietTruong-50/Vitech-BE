@@ -6,11 +6,7 @@ import lombok.Data;
 @Data
 public class OrderRequest {
 
-    private String orderCode;
-
     private Long shippingMethodId;
-
-    private Long userId;
 
     private OrderStatusEnum orderStatusEnum;
 

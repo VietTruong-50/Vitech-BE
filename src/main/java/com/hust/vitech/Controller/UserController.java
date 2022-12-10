@@ -1,14 +1,23 @@
 package com.hust.vitech.Controller;
 
+import com.hust.vitech.Enum.OrderStatusEnum;
+import com.hust.vitech.Model.Order;
+import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.CartItemRequest;
+import com.hust.vitech.Request.OrderRequest;
+import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Service.Impl.CartServiceImpl;
+import com.hust.vitech.Service.Impl.OrderServiceImpl;
 import com.hust.vitech.Service.Impl.UserServiceImpl;
+import com.hust.vitech.Service.Impl.WishlistServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,7 +28,8 @@ public class UserController {
     private UserServiceImpl userService;
 
     @Autowired
-    private CartServiceImpl cartService;
+    private OrderServiceImpl orderService;
+
 
     @GetMapping(value = "/users", produces = "application/json")
     public ApiResponse<Page<User>> getAllUsers(@RequestParam int size,
@@ -33,33 +43,18 @@ public class UserController {
         return ApiResponse.successWithResult(userService.getCurrentUser());
     }
 
-    @GetMapping(value = "/cart/{id}", produces = "application/json")
-    public ApiResponse<ShoppingSession> getShoppingCart(@PathVariable("id") Long id) {
-        return ApiResponse.successWithResult(cartService.getShoppingCart(id));
+    @PostMapping(value="/order/{orderId}")
+    public ApiResponse<Order> changeOrderStatus(@PathVariable("orderId") Long orderId, @RequestParam("status") OrderStatusEnum orderStatusEnum){
+        return ApiResponse.successWithResult(orderService.updateOrderStatus(orderId, orderStatusEnum));
     }
 
-    @GetMapping(value = "/cart/{id}/total", produces = "application/json")
-    public ApiResponse<Double> getTotalValues(@PathVariable("id") Long id) {
-        return ApiResponse.successWithResult(cartService.getTotalValues(id));
+    @PutMapping(value = "/user/{userId}")
+    public ApiResponse<User> updateUser(@PathVariable("userId") Long userId, @RequestBody UserRequest userRequest){
+        return ApiResponse.successWithResult(userService.updateUser(userId, userRequest));
     }
 
-    @PostMapping(value = "/cart", produces = "application/json")
-    public ApiResponse<ShoppingSession> addItemToCart(@RequestBody CartItemRequest cartItemRequest) {
-        try {
-            return ApiResponse.
-                    successWithResult(cartService.addItemToCart(cartItemRequest),
-                            "Add 1 item to shopping cart");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    @GetMapping(value = "/user/{userId}")
+    public ApiResponse<User> getUserById(@PathVariable("userId") Long userId){
+        return ApiResponse.successWithResult(userService.getUserById(userId));
     }
-
-    @DeleteMapping(value = "/cart/{id}/product/{productId}", produces = "application/json")
-    public ApiResponse<?> removeItemFromCart(@PathVariable("id") Long shoppingSessionId,
-                                             @PathVariable("productId") Long productId) {
-        cartService.removeItemFromCart(shoppingSessionId, productId);
-        return ApiResponse.successWithResult("Remove 1 item from shopping cart");
-    }
-
 }

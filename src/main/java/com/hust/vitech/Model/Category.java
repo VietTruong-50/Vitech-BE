@@ -26,5 +26,5 @@ public class Category extends BaseModel{
 
     @JsonIgnore
     @OneToMany(mappedBy = "category")
-    private Set<Brand> brands = new HashSet<>();
+    private Set<SubCategory> subCategories = new HashSet<>();
 }

@@ -19,7 +19,7 @@ public class ProductRequest {
 
     private Double actualPrice;
 
-    private Double discountPrice;
+//    private Double discountPrice;
 
     private int quantity;
 
@@ -43,7 +43,6 @@ public class ProductRequest {
         product.setProductImages(this.getProductImages());
         product.setQuantity(this.getQuantity());
         product.setFeatureImageByte(this.getFeatureImageByte());
-        product.setDiscountPrice(this.getDiscountPrice());
 
         return product;
     }

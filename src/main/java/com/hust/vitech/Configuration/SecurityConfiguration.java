@@ -29,7 +29,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/api-docs",
             "/api-docs.yaml",
             "/swagger-ui/**",
-            "/api-docs/**"
+            "/api-docs/**",
+            "/api/cart/**",
+            "/api/products/**",
+            "/api/checkout"
+    };
+
+    private final String[] customerPrivateEndpoints = {
+            "/api/customer/wishlist/**"
     };
 
     @Autowired
@@ -66,6 +73,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers(publicEndpoints).permitAll()
+                .antMatchers(customerPrivateEndpoints).authenticated()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

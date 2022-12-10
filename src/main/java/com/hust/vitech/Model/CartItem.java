@@ -21,6 +21,8 @@ public class CartItem extends BaseModel{
 
     private int quantity;
 
+    private Double itemPrice;
+
     @ManyToOne
     @JoinColumn(name = "shopping_session_id")
     @JsonIgnore

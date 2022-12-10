@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Service
@@ -35,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CustomerRepository userRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     @Override
     public Order createOrder(OrderRequest orderRequest) {
         Order order = new Order();
@@ -44,22 +49,33 @@ public class OrderServiceImpl implements OrderService {
 
         Customer customer = userRepository.findCustomerByUserName(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
-        order.setOrderCode(orderRequest.getOrderCode());
+        order.setOrderCode(randomString(6));
         order.setShippingMethod(shippingMethodRepository
                 .findById(orderRequest.getShippingMethodId()).orElse(null));
         order.setCustomer(customer);
         order.setStatus(orderRequest.getOrderStatusEnum());
+        order.setOrderDate(LocalDate.now());
 
         Set<CartItem> cartItems = cartItemRepository
                 .findAllByShoppingSessionId(customer.getShoppingSession().getId());
 
         if (!cartItems.isEmpty()) {
-            cartItems.forEach(item ->
-                    orderDetailRepository
-                            .save(new OrderDetail(order,
-                                    item.getProduct(),
-                                    item.getQuantity(),
-                                    item.getProduct().getActualPrice())));
+            cartItems.forEach(item -> {
+                        Product product = item.getProduct();
+
+                        product.setQuantity(product.getQuantity() - item.getQuantity());
+
+                        orderRepository.save(order);
+
+                        orderDetailRepository
+                                .save(new OrderDetail(order,
+                                        product,
+                                        item.getQuantity(),
+                                        item.getProduct().getActualPrice()));
+
+                        productRepository.save(product);
+                    }
+            );
         }
         order.setTotal(shoppingSessionRepository.getTotalValues(customer.getShoppingSession().getId()));
 
@@ -84,5 +100,13 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
     }
 
+    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    static SecureRandom rnd = new SecureRandom();
 
+    private String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++)
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
+    }
 }

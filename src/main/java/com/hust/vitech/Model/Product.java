@@ -3,8 +3,6 @@ package com.hust.vitech.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -28,8 +26,10 @@ public class Product extends BaseModel{
     @Column(length = 1000)
     private String productCode;
 
+    @Column(length = 1000)
     private String parameters;
 
+    @Column(length = 1000)
     private String content;
 
     private int quantity;
@@ -37,8 +37,8 @@ public class Product extends BaseModel{
     @Column(name = "actual_price")
     private Double actualPrice;
 
-    @Column(name = "discount_price")
-    private Double discountPrice;
+//    @Column(name = "discount_price")
+//    private Double discountPrice;
 
     @Column(name = "feature_image_name")
     private String featureImageName;
@@ -58,8 +58,8 @@ public class Product extends BaseModel{
     private Set<Customer> customers = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "brand_id")
-    private Brand brand;
+    @JoinColumn(name = "sub_cate_id")
+    private SubCategory subCategory;
 
     @JsonIgnore
     @OneToMany(mappedBy = "product")

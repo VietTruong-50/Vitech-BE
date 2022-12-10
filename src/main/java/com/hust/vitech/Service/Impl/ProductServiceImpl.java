@@ -2,7 +2,7 @@ package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
-import com.hust.vitech.Repository.BrandRepository;
+import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Repository.ProductRepository;
 import com.hust.vitech.Request.ProductRequest;
@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private BrandRepository brandRepository;
+    private SubCategoryRepository subCategoryRepository;
 
     @Override
     public Product createNewProduct(ProductRequest productRequest) {
@@ -45,9 +45,9 @@ public class ProductServiceImpl implements ProductService {
 //        }
 
         if (productRequest.getBrand_id() != null) {
-            product.setBrand(
-                    brandRepository.findById(productRequest.getBrand_id())
-                            .orElseThrow(() -> new ResourceNotFoundException("Brand not found")));
+            product.setSubCategory(
+                    subCategoryRepository.findById(productRequest.getBrand_id())
+                            .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
         }
 
         return productRepository.save(productRequest.toProduct(product));
@@ -68,9 +68,9 @@ public class ProductServiceImpl implements ProductService {
 //            }
 
             if (productRequest.getBrand_id() != null) {
-                product.setBrand(
-                        brandRepository.findById(productRequest.getBrand_id())
-                                .orElseThrow(() -> new ResourceNotFoundException("Brand not found")));
+                product.setSubCategory(
+                        subCategoryRepository.findById(productRequest.getBrand_id())
+                                .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
             }
 
             return productRepository.save(productRequest.toProduct(product));
@@ -128,15 +128,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> findAllByCategoryName(String categoryName, int size, int page, String sortBy) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//        return productRepository.findAllByCategoryName(pageable, categoryName);
-        return null;
-    }
-
-    @Override
-    public Page<Product> findAllByBrandName(String brandName, int size, int page, String sortBy) {
+    public Page<Product> findAllBySubCategoryName(String brandName, int size, int page, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return productRepository.findAllByBrandBrandName(pageable, brandName);
+        return productRepository.findAllBySubCategory_SubCateName(pageable, brandName);
     }
 }

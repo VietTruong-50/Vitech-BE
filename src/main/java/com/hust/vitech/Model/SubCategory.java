@@ -9,20 +9,20 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "brands")
-public class Brand extends BaseModel{
+@Table(name = "sub_categories")
+public class SubCategory extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true)
-    private String brandName;
+    @Column(name = "sub_cate_name", unique = true)
+    private String subCateName;
 
     private String description;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "subCategory")
     private Set<Product> products = new HashSet<>();
 
     @ManyToOne

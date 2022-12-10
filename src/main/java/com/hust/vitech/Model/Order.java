@@ -1,9 +1,13 @@
 package com.hust.vitech.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hust.vitech.Enum.OrderStatusEnum;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -24,10 +28,16 @@ public class Order {
 
     private OrderStatusEnum status;
 
+    private LocalDate deliverDate;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate orderDate;
+
     @ManyToOne
     @JoinColumn(name = "shipping_id")
     private ShippingMethod shippingMethod;
 
     @OneToMany(mappedBy = "order")
+    @JsonIgnore
     private Set<OrderDetail> orderDetails;
 }

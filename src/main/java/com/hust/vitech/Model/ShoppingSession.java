@@ -23,6 +23,7 @@ public class ShoppingSession extends BaseModel{
     private Double total;
 
     @OneToMany(mappedBy = "shoppingSession")
+    @JsonIgnore
     private Set<CartItem> cartItems;
 
 }
