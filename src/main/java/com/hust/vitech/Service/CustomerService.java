@@ -1,5 +1,6 @@
 package com.hust.vitech.Service;
 
+import com.hust.vitech.Model.Comment;
 import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Request.CustomerRequest;
 import com.hust.vitech.Request.LoginRequest;
@@ -12,5 +13,6 @@ public interface CustomerService {
     ApiResponse<Customer> register(CustomerRequest customerRequest);
 
     Customer getCurrentUser();
+
 }
 

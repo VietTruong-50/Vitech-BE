@@ -30,13 +30,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/api-docs.yaml",
             "/swagger-ui/**",
             "/api-docs/**",
-            "/api/cart/**",
+            "/api/customer/**",
             "/api/products/**",
-            "/api/checkout"
+            "/api/categories/**",
+            "/api/subCategories/**"
     };
 
     private final String[] customerPrivateEndpoints = {
-            "/api/customer/wishlist/**"
+            "/api/customer/wishlist/**",
+            "/api/customer/comment/**"
     };
 
     @Autowired

@@ -11,4 +11,7 @@ import java.util.Set;
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     Optional<CartItem> findByProductIdAndShoppingSessionId(Long itemId, Long shoppingSessionId);
     Set<CartItem> findAllByShoppingSessionId(Long shoppingSessionId);
+
+    void deleteAllByShoppingSessionId(Long shoppingSessionId);
+
 }

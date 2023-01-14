@@ -34,4 +34,10 @@ public class AuthController {
     public ApiResponse<?> register(@Valid @RequestBody SignupRequest signupRequest) {
         return userService.register(signupRequest);
     }
+
+    @GetMapping(value = "account", produces = "application/json")
+    public ApiResponse<?> getCurrentUser() {
+        return ApiResponse.successWithResult(userService.getCurrentUser());
+    }
+
 }

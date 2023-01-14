@@ -14,4 +14,8 @@ public interface ShoppingSessionRepository extends JpaRepository<ShoppingSession
             "WHERE c.shoppingSession.id = ?1")
     Double getTotalValues(Long shoppingSessionId);
 
+    @Query(value = "select * from shoppingSession s " +
+            "join customers c on s.id = c.shopping_session_id " +
+            "where c.user_name = ?1", nativeQuery = true)
+    ShoppingSession findByCustomerUserName(String userName);
 }

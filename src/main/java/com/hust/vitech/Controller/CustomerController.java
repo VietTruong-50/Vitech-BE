@@ -1,18 +1,22 @@
 package com.hust.vitech.Controller;
 
+import com.hust.vitech.Model.Comment;
 import com.hust.vitech.Model.Order;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Request.CartItemRequest;
+import com.hust.vitech.Request.CommentRequest;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Service.Impl.CartServiceImpl;
+import com.hust.vitech.Service.Impl.CommentServiceImpl;
 import com.hust.vitech.Service.Impl.OrderServiceImpl;
 import com.hust.vitech.Service.Impl.WishlistServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -26,9 +30,14 @@ public class CustomerController {
 
     @Autowired
     private WishlistServiceImpl wishlistService;
-    @GetMapping(value = "/cart/{id}", produces = "application/json")
-    public ApiResponse<ShoppingSession> getShoppingCart(@PathVariable("id") Long id) {
-        return ApiResponse.successWithResult(cartService.getShoppingCart(id));
+
+    @Autowired
+    private CommentServiceImpl commentService;
+
+
+    @GetMapping(value = "/cart", produces = "application/json")
+    public ApiResponse<ShoppingSession> getShoppingCart() {
+        return ApiResponse.successWithResult(cartService.getShoppingCart());
     }
 
     @GetMapping(value = "/cart/{id}/total", produces = "application/json")
@@ -44,14 +53,13 @@ public class CustomerController {
                             "Add 1 item to shopping cart");
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    @DeleteMapping(value = "/cart/{id}/product/{productId}", produces = "application/json")
-    public ApiResponse<?> removeItemFromCart(@PathVariable("id") Long shoppingSessionId,
-                                             @PathVariable("productId") Long productId) {
-        cartService.removeItemFromCart(shoppingSessionId, productId);
+    @DeleteMapping(value = "/cart/product/{productId}", produces = "application/json")
+    public ApiResponse<?> removeItemFromCart(@PathVariable("productId") Long productId) {
+        cartService.removeItemFromCart(productId);
         return ApiResponse.successWithResult("Remove 1 item from shopping cart");
     }
 
@@ -73,7 +81,27 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/wishlist")
-    public ApiResponse<Set<Product>> getUserWishlist() {
+    public ApiResponse<List<Product>> getUserWishlist() {
         return ApiResponse.successWithResult(wishlistService.getWishlist());
     }
+
+    @PostMapping(value = "/comment")
+    public ApiResponse<Comment> createComment(@RequestBody CommentRequest commentRequest) {
+        return ApiResponse.successWithResult(commentService.createComment(commentRequest));
+    }
+
+    @DeleteMapping(value = "/comment/{commentId}")
+    public ApiResponse<Comment> deleteComment(@PathVariable("commentId") Long commentId) {
+        return ApiResponse.successWithResult(commentService.deleteComment(commentId));
+    }
+
+    @GetMapping(value = "/product/{id}/comment")
+    public ApiResponse<Page<Comment>> getCommentPagination(@PathVariable("id") Long productId,
+                                                           @RequestParam int page,
+                                                           @RequestParam int size,
+                                                           @RequestParam String sortBy,
+                                                           @RequestParam String orderBy) {
+        return ApiResponse.successWithResult(commentService.getCommentPagination(productId, page, size, sortBy, orderBy));
+    }
+
 }

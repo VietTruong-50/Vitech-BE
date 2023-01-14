@@ -1,18 +1,23 @@
 package com.hust.vitech.Service;
 
+import com.hust.vitech.Model.CartItem;
 import com.hust.vitech.Model.ShoppingSession;
 import com.hust.vitech.Request.CartItemRequest;
+
+import java.util.List;
 
 public interface CartService {
     ShoppingSession addItemToCart(CartItemRequest cartItemRequest) throws Exception;
 
-    void updateCart(Long currentSessionId, Long itemId, int quantity);
+    void updateCurrentCart(List<CartItem> cartItemList);
 
-    void removeItemFromCart(Long currentSessionId, Long itemId);
+    void removeItemFromCart(Long itemId);
 
-    ShoppingSession getShoppingCart(Long id);
+    ShoppingSession getShoppingCart();
 
     Double getTotalValues(Long shoppingSessionId);
 
     ShoppingSession createShoppingSession();
+
+    void updateCartItem(Long itemId, int quantity);
 }

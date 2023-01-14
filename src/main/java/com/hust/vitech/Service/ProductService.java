@@ -29,4 +29,5 @@ public interface ProductService {
 
     Page<Product> findAllBySubCategoryName(String brandName, int size, int page, String sortBy);
 
+
 }

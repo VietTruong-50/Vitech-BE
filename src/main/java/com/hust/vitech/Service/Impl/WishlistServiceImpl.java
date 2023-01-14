@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
-    public Set<Product> getWishlist() {
+    public List<Product> getWishlist() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<Customer> user = userRepository.findCustomerByUserName(authentication.getName());
 

@@ -3,10 +3,9 @@ package com.hust.vitech.Request;
 import lombok.Data;
 
 @Data
-public class CartItemRequest {
+public class CommentRequest {
 
     private Long productId;
 
-    private int quantity;
-
+    private String content;
 }

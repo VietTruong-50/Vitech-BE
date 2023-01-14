@@ -15,9 +15,15 @@ public interface UserService {
 
     ApiResponse<?> register(SignupRequest signupRequest);
 
-    User getCurrentUser();
+    ApiResponse<?> getCurrentUser();
 
     User updateUser(Long userId, UserRequest userRequest);
 
     User getUserById(Long userId);
+
+    void deleteUser(Long userId);
+
+//    Page<User> filterUserByRole(List<String> listRoles, int page, int size, String sortBy);
+
+    Page<User> filterUserByRole(String role, int page, int size, String sortBy);
 }

@@ -1,11 +1,13 @@
 package com.hust.vitech.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,7 +25,9 @@ public class ShoppingSession extends BaseModel{
     private Double total;
 
     @OneToMany(mappedBy = "shoppingSession")
-    @JsonIgnore
-    private Set<CartItem> cartItems;
+    private List<CartItem> cartItems;
 
+    @OneToOne(mappedBy = "shoppingSession")
+    @JsonIgnore
+    private Customer customer;
 }

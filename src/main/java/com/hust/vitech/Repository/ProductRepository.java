@@ -39,7 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findProductByProductCode(String code);
 
     //Cac san pham lien quan
-    List<Product> findTop5BySubCategory_SubCateName(String brandName);
+    List<Product> findTop8BySubCategory_SubCateName(String subCateName);
 
     @Query("SELECT p FROM Product p WHERE p.actualPrice BETWEEN ?1 AND ?2")
     Page<Product> findAllByActualPriceBetween2Values(Pageable pageable, Double firstPrice, Double secondPrice);

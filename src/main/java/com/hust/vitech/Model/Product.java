@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -64,4 +65,8 @@ public class Product extends BaseModel{
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<Comment> comments;
 }

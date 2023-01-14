@@ -1,12 +1,14 @@
 package com.hust.vitech.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hust.vitech.Enum.GenderEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -41,13 +43,16 @@ public class Customer extends BaseModel{
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> wishListProducts;
+    private List<Product> wishListProducts;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "shopping_session_id", referencedColumnName = "id")
     @JsonIgnore
     private ShoppingSession shoppingSession;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private Set<Comment> comments;
     public Customer(String userName, String password, String email, GenderEnum genderEnum, String address, String role){
         this.userName = userName;
         this.email = email;

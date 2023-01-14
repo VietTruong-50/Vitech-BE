@@ -92,9 +92,9 @@ public class ProductController {
         }
     }
 
-    @GetMapping(value = "/products/brands/{brandName}", produces = "application/json")
-    public ApiResponse<List<Product>> findProductsByBrandName(@PathVariable("brandName") String brandName) {
-        return ApiResponse.successWithResult(productService.findProductsByBrandName(brandName));
+    @GetMapping(value = "/products/subCategory/{subCate}", produces = "application/json")
+    public ApiResponse<Page<Product>> findProductsBySubCateName(@PathVariable("subCate") String subCate, int page, int size, String sortBy) {
+        return ApiResponse.successWithResult(productService.findAllBySubCategoryName(subCate, page, size, sortBy));
     }
 
     @GetMapping(value = "/products/categories/{categoryName}", produces = "application/json")

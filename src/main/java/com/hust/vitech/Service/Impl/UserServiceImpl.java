@@ -1,9 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Jwt.JwtUtils;
-import com.hust.vitech.Model.Customer;
-import com.hust.vitech.Model.Role;
-import com.hust.vitech.Model.User;
+import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.CustomerRepository;
 import com.hust.vitech.Repository.RoleRepository;
 import com.hust.vitech.Repository.ShoppingSessionRepository;
@@ -16,11 +14,9 @@ import com.hust.vitech.Response.JwtResponse;
 import com.hust.vitech.Response.MessageResponse;
 import com.hust.vitech.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,9 +38,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
-    private ShoppingSessionRepository shoppingSessionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -73,16 +66,6 @@ public class UserServiceImpl implements UserService {
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
-
-        Optional<Customer> customer = customerRepository.findCustomerByUserName(userDetails.getUsername());
-
-        if (customer.isPresent() && Objects.equals(roles.get(0), "ROLE_CUSTOMER")) {
-            customer.get().setShoppingSession(
-                    shoppingSessionRepository.findById(loginRequest.getShoppingSessionId()).orElse(null)
-            );
-
-            customerRepository.save(customer.get());
-        }
 
         return new JwtResponse(jwt,
                 userDetails.getId(),
@@ -159,11 +142,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getCurrentUser() {
+    public ApiResponse<?> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return userRepository.findUserByUserName(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (userRepository.existsByUserName(authentication.getName())) {
+            return ApiResponse.successWithResult(userRepository.findUserByUserName(authentication.getName()).get());
+        } else if (customerRepository.existsByUserName(authentication.getName())) {
+            return ApiResponse.successWithResult(customerRepository.findCustomerByUserName(authentication.getName()).get());
+        }
+        return null;
     }
 
     @Override
@@ -203,4 +190,37 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+
+    @Override
+    public void deleteUser(Long userId) {
+        userRepository.findById(userId).map(user -> {
+                    userRepository.delete(user);
+                    return ResponseEntity.ok().build();
+                }
+        ).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public Page<User> filterUserByRole(String role, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return userRepository.findAllByRole(role, pageable);
+    }
+
+//    @Override
+//    public Page<User> filterUserByRole(List<String> listRoles, int page, int size, String sortBy) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+//
+//        List<User> users = new ArrayList<>();
+//
+//        for (String role : listRoles) {
+//            if (role.equals("admin")) {
+//                users.addAll(userRepository.findAllByRole("ROLE_ADMIN"));
+//            } else if (role.equals("mod")) {
+//                users = userRepository.findAllByRole("ROLE_MODERATOR");
+//            }
+//        };
+//
+//        return new PageImpl<>(users, pageable, users.size());
+//    }
 }
