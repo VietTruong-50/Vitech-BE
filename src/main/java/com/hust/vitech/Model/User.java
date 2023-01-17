@@ -14,28 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User extends BaseModel{
+public class User extends Person{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "user_name")
-    private String userName;
-
-    @Column(name = "password")
-    @JsonIgnore
-    private String password;
-
-    @Column(name = "email")
-    private String email;
-
-    private GenderEnum genderEnum;
-
-    private String address;
-    @Column(name = "salary", columnDefinition = "0")
-    private Double salary;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -46,9 +26,7 @@ public class User extends BaseModel{
     private Set<Role> roles;
 
     public User(String userName, String password, String email){
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
+        super(userName, password, email);
     }
 
 }

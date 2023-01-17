@@ -16,26 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "customers")
-public class Customer extends BaseModel{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "user_name")
-    private String userName;
-
-    @Column(name = "password")
-    @JsonIgnore
-    private String password;
-
-    @Column(name = "email")
-    private String email;
-
-    private GenderEnum genderEnum;
-
-    private String address;
+public class Customer extends Person{
 
     private String role;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -54,17 +35,11 @@ public class Customer extends BaseModel{
     @OneToMany(mappedBy = "customer")
     private Set<Comment> comments;
     public Customer(String userName, String password, String email, GenderEnum genderEnum, String address, String role){
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
-        this.genderEnum = genderEnum;
-        this.address = address;
+        super(userName, password, email, genderEnum, address);
         this.role = role;
     }
 
     public Customer(String userName, String password, String email){
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
+        super(userName, password, email);
     }
 }
