@@ -4,10 +4,8 @@ import com.hust.vitech.Jwt.JwtUtils;
 import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.CustomerRepository;
 import com.hust.vitech.Repository.RoleRepository;
-import com.hust.vitech.Repository.ShoppingSessionRepository;
 import com.hust.vitech.Repository.UserRepository;
 import com.hust.vitech.Request.LoginRequest;
-import com.hust.vitech.Request.SignupRequest;
 import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Response.JwtResponse;
@@ -74,9 +72,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<?> register(SignupRequest signupRequest) {
+    public ApiResponse<?> register(UserRequest signupRequest) {
         if (!signupRequest.isCustomer()) {
-            if (userRepository.existsByUserName(signupRequest.getUsername())) {
+            if (userRepository.existsByUserName(signupRequest.getUserName())) {
+
                 return ApiResponse.failureWithCode("", new MessageResponse("Error: Username is already taken!").getMessage());
             }
 
@@ -85,12 +84,12 @@ public class UserServiceImpl implements UserService {
             }
 
             User user = new User(
-                    signupRequest.getUsername(),
+                    signupRequest.getUserName(),
                     passwordEncoder.encode(signupRequest.getPassword()),
                     signupRequest.getEmail());
 
             //Get role from request
-            Set<String> strRoles = signupRequest.getRoles();
+            List<String> strRoles = signupRequest.getRoles();
             Set<Role> roles = new HashSet<>();
 
             //Add roles to user
@@ -101,17 +100,14 @@ public class UserServiceImpl implements UserService {
             } else {
                 strRoles.forEach(
                         role -> {
-                            switch (role) {
-                                case "admin" -> {
-                                    Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                    roles.add(adminRole);
-                                }
-                                default -> {
-                                    Role modRole = roleRepository.findByName("ROLE_MODERATOR")
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                    roles.add(modRole);
-                                }
+                            if (role.equals("admin")) {
+                                Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                roles.add(adminRole);
+                            } else {
+                                Role modRole = roleRepository.findByName("ROLE_MODERATOR")
+                                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                roles.add(modRole);
                             }
                         }
                 );
@@ -121,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
             return ApiResponse.successWithResult(userRepository.save(user));
         } else {
-            if (customerRepository.existsByUserName(signupRequest.getUsername())) {
+            if (customerRepository.existsByUserName(signupRequest.getUserName())) {
                 return ApiResponse.failureWithCode("", new MessageResponse("Error: Username is already taken!").getMessage());
             }
 
@@ -129,11 +125,11 @@ public class UserServiceImpl implements UserService {
                 return ApiResponse.failureWithCode("", new MessageResponse("Error: Email is already taken!").getMessage());
             }
 
-            Customer customer = new Customer(signupRequest.getUsername(),
+            Customer customer = new Customer(signupRequest.getUserName(),
                     passwordEncoder.encode(signupRequest.getPassword()),
-                    signupRequest.getEmail());
-
-            customer.setRole("ROLE_CUSTOMER");
+                    signupRequest.getEmail(), signupRequest.getGenderEnum(),
+                    signupRequest.getAddress(), "ROLE_CUSTOMER",
+                    signupRequest.getFullName(), signupRequest.getPhone(), signupRequest.getDateOfBirth());
 
             return ApiResponse.successWithResult(customerRepository.save(customer));
 
@@ -166,7 +162,6 @@ public class UserServiceImpl implements UserService {
             Set<Role> roles = new HashSet<>();
 
             userRequest.getRoles().forEach(role -> {
-
                 if (role.equals("admin")) {
                     Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -182,6 +177,40 @@ public class UserServiceImpl implements UserService {
 
             return userRepository.save(user.get());
         }
+        return null;
+    }
+
+    @Override
+    public ApiResponse<?> updateProfile(UserRequest userRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+        Customer customer = null;
+        if (userRepository.existsByUserName(authentication.getName())) {
+            user = userRepository.findUserByUserName(authentication.getName()).get();
+        } else if (customerRepository.existsByUserName(authentication.getName())) {
+            customer = customerRepository.findCustomerByUserName(authentication.getName()).get();
+        }
+
+        if(customer != null){
+            customer.setEmail(userRequest.getEmail());
+            customer.setAddress(userRequest.getAddress());
+            customer.setFullName(userRequest.getFullName());
+            customer.setGenderEnum(userRequest.getGenderEnum());
+            customer.setFullName(userRequest.getFullName());
+            customer.setDateOfBirth(userRequest.getDateOfBirth());
+
+            return ApiResponse.successWithResult(customerRepository.save(customer));
+        }else if (user != null){
+            user.setAddress(userRequest.getAddress());
+            user.setFullName(userRequest.getFullName());
+            user.setGenderEnum(userRequest.getGenderEnum());
+            user.setFullName(userRequest.getFullName());
+            user.setDateOfBirth(userRequest.getDateOfBirth());
+            user.setEmail(userRequest.getEmail());
+
+            return ApiResponse.successWithResult(userRepository.save(user));
+        }
+
         return null;
     }
 

@@ -1,5 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Model.Category;
+import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.SubCategory;
 import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Repository.CategoryRepository;
@@ -13,6 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,9 +54,36 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         return subCategoryRepository.findAll();
     }
 
+    @PersistenceContext
+    EntityManager entityManager;
+
     @Override
-    public List<SubCategory> getSubCategoryDataByCategory(String name) {
-        return subCategoryRepository.findAllByCategory_Name(name);
+    public List<SubCategory> getSubCategoryDataByCategory(List<String> names) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SubCategory> criteriaQuery = criteriaBuilder.createQuery(SubCategory.class);
+
+        Root<SubCategory> root = criteriaQuery.from(SubCategory.class);
+        Join<SubCategory, Category> sbc_ct = root.join("category");
+
+        List<Predicate> conditions = new ArrayList<>();
+
+        TypedQuery<SubCategory> typedQuery ;
+
+        if (names != null) {
+            for (String name : names) {
+                conditions.add(criteriaBuilder.equal(sbc_ct.get("name"), name));
+            }
+
+            typedQuery = entityManager.createQuery(criteriaQuery
+                    .select(root)
+                    .where(criteriaBuilder.or(conditions.toArray(new Predicate[]{})))
+            );
+        } else {
+            typedQuery = entityManager.createQuery(criteriaQuery
+                    .select(root));
+        }
+
+        return typedQuery.getResultList();
     }
 
     @Override

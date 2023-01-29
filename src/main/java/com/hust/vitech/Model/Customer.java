@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,8 @@ import java.util.Set;
 public class Customer extends Person{
 
     private String role;
+
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "wishlist_products",
             joinColumns = @JoinColumn(name = "customer_id"),
@@ -34,12 +37,10 @@ public class Customer extends Person{
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Set<Comment> comments;
-    public Customer(String userName, String password, String email, GenderEnum genderEnum, String address, String role){
-        super(userName, password, email, genderEnum, address);
+    public Customer(String userName, String password, String email,
+                    GenderEnum genderEnum, String address, String role, String fullName, String phone, LocalDate dateOfBirth){
+        super(userName, password, email, genderEnum, address, fullName, phone, dateOfBirth);
         this.role = role;
     }
 
-    public Customer(String userName, String password, String email){
-        super(userName, password, email);
-    }
 }

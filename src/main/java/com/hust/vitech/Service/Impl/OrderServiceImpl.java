@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -47,9 +48,11 @@ public class OrderServiceImpl implements OrderService {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
 
-        Customer customer = userRepository.findCustomerByUserName(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = userRepository
+                .findCustomerByUserName(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
-        order.setOrderCode(randomString(6));
+        order.setOrderCode(randomString(12));
         order.setShippingMethod(shippingMethodRepository
                 .findById(orderRequest.getShippingMethodId()).orElse(null));
         order.setCustomer(customer);
@@ -100,7 +103,26 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
     }
 
-    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    @Override
+    public List<Order> getCurrentOrders() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        Customer customer = userRepository
+                .findCustomerByUserName(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        return orderRepository.findAllByCustomer(customer);
+    }
+
+    @Override
+    public Order getOrderByCode(String code) {
+        return orderRepository.findByOrderCode(code);
+    }
+
+    //Generate order code
+
+    static final String AB = "0123456789";
     static SecureRandom rnd = new SecureRandom();
 
     private String randomString(int len) {

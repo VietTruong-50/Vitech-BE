@@ -23,7 +23,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @PostMapping(value = {"/products"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
     public ApiResponse<Product> createNewProduct(@RequestPart("product") ProductRequest productRequest,
                                                  @RequestPart("feature_image") MultipartFile featureImage,

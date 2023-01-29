@@ -10,7 +10,7 @@ public interface SubCategoryService {
     SubCategory createNewSubCategory(SubCategoryRequest subCategoryRequest);
     Page<SubCategory> getSubCategoryData(int size, int page, String sortBy);
     List<SubCategory> getSubCategoryData();
-    List<SubCategory> getSubCategoryDataByCategory(String name);
+    List<SubCategory> getSubCategoryDataByCategory(List<String> names);
     SubCategory updateSubCategory(Long id, SubCategoryRequest subCategoryRequest);
     SubCategory getSubCategoryById(Long id);
 }

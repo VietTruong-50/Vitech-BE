@@ -3,6 +3,7 @@ package com.hust.vitech.Request;
 import com.hust.vitech.Enum.GenderEnum;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 @Data
 public class UserRequest {
@@ -10,14 +11,22 @@ public class UserRequest {
 
     private String password;
 
+    private String fullName;
+
     private String email;
 
     private GenderEnum genderEnum;
 
     private String address;
 
+    private String phone;
+
+    private LocalDate dateOfBirth;
+
     private double salary;
 
     private List<String> roles;
+
+    private boolean isCustomer;
 
 }

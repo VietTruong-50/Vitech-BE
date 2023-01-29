@@ -30,9 +30,9 @@ public class SubCategoryController {
         return ApiResponse.successWithResult(subCategoryService.getSubCategoryData(size, page, sortBy));
     }
 
-    @GetMapping(value = "categories/{name}/SubCategories", produces = "application/json")
-    public ApiResponse<List<SubCategory>> getSubCategoryDataByCategory(@PathVariable("name") String name) {
-        return ApiResponse.successWithResult(subCategoryService.getSubCategoryDataByCategory(name));
+    @GetMapping(value = "categories/subCategories", produces = "application/json")
+    public ApiResponse<List<SubCategory>> getSubCategoryDataByCategory(@RequestParam(required = false) List<String> names) {
+        return ApiResponse.successWithResult(subCategoryService.getSubCategoryDataByCategory(names));
     }
 
     @GetMapping(value = "subCategories/{id}", produces = "application/json")

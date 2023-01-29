@@ -38,8 +38,7 @@ public class Product extends BaseModel{
     @Column(name = "actual_price")
     private Double actualPrice;
 
-//    @Column(name = "discount_price")
-//    private Double discountPrice;
+    private String shortDescription;
 
     @Column(name = "feature_image_name")
     private String featureImageName;

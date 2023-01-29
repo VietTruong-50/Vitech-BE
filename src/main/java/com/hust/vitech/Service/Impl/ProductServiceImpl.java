@@ -1,26 +1,27 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Model.Category;
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
+import com.hust.vitech.Model.SubCategory;
 import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Repository.ProductRepository;
 import com.hust.vitech.Request.ProductRequest;
 import com.hust.vitech.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -130,5 +131,62 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> findAllBySubCategoryName(String brandName, int size, int page, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return productRepository.findAllBySubCategory_SubCateName(pageable, brandName);
+    }
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    @Override
+    public Page<Product> filterProduct(List<String> categories,
+                                       List<String> subCategories,
+                                       int firstPrice,
+                                       int secondPrice,
+                                       int page, int size,
+                                       String sortBy, String searchText) {
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Product> criteriaQuery = criteriaBuilder.createQuery(Product.class);
+        Root<Product> root = criteriaQuery.from(Product.class);
+        Join<Product, SubCategory> prd_sbc = root.join("subCategory");
+        Join<SubCategory, Category> sbc_ct = prd_sbc.join("category");
+        List<Predicate> conditions = new ArrayList<>();
+
+        if (subCategories != null) {
+            List<Predicate> predicatesNames = new ArrayList<>();
+
+            for (String name : subCategories) {
+                predicatesNames.add(criteriaBuilder.equal(prd_sbc.get("subCateName"), name));
+            }
+
+            conditions.add(criteriaBuilder.or(predicatesNames.toArray(new Predicate[]{})));
+        }
+
+        conditions.add(criteriaBuilder.between(root.get("actualPrice"), firstPrice, secondPrice));
+
+        if (categories != null) {
+            List<Predicate> predicatesIds = new ArrayList<>();
+
+            for (String name : categories) {
+                predicatesIds.add(criteriaBuilder.equal(sbc_ct.get("name"), name));
+            }
+
+            conditions.add(criteriaBuilder.or(predicatesIds.toArray(new Predicate[]{})));
+        }
+
+        if (!Objects.equals(searchText, "")) {
+            conditions.add(criteriaBuilder.like(root.get("name").as(String.class), '%' + searchText + '%'));
+        }
+
+        TypedQuery<Product> typedQuery = entityManager.createQuery(criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.and(conditions.toArray(new Predicate[]{})))
+        );
+
+        List<Product> result = typedQuery.getResultList();
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return new PageImpl<>(result, pageable, result.size());
     }
 }

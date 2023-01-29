@@ -2,7 +2,6 @@ package com.hust.vitech.Service;
 
 import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.LoginRequest;
-import com.hust.vitech.Request.SignupRequest;
 import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Response.JwtResponse;
@@ -13,11 +12,13 @@ public interface UserService {
 
     JwtResponse login(LoginRequest loginRequest);
 
-    ApiResponse<?> register(SignupRequest signupRequest);
+    ApiResponse<?> register(UserRequest signupRequest);
 
     ApiResponse<?> getCurrentUser();
 
     User updateUser(Long userId, UserRequest userRequest);
+
+    ApiResponse<?> updateProfile(UserRequest userRequest);
 
     User getUserById(Long userId);
 

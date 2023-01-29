@@ -41,6 +41,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //Cac san pham lien quan
     List<Product> findTop8BySubCategory_SubCateName(String subCateName);
 
-    @Query("SELECT p FROM Product p WHERE p.actualPrice BETWEEN ?1 AND ?2")
-    Page<Product> findAllByActualPriceBetween2Values(Pageable pageable, Double firstPrice, Double secondPrice);
+    @Query(value = "select * from products p" +
+            " join sub_categories sc on sc.id = p.sub_cate_id" +
+            " join categories c on c.id = sc.category_id" +
+            " where c.name REGEXP ?1 and sc.sub_cate_name REGEXP ?2" +
+            " and p.actual_price between ?3 and ?4", nativeQuery = true)
+    Page<Product> filterProduct(Pageable pageable, String categoryName, String subCateName,
+                                                     Double firstPrice, Double secondPrice);
 }
+
+
+

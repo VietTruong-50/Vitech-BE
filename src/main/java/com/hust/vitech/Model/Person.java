@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -25,6 +26,8 @@ public class Person extends BaseModel{
     @JsonIgnore
     private String password;
 
+    private String fullName;
+
     @Column(name = "email")
     private String email;
 
@@ -32,17 +35,24 @@ public class Person extends BaseModel{
 
     private String address;
 
+    private String phone;
+
+    private LocalDate dateOfBirth;
+
     public Person(String userName, String password, String email){
         this.userName = userName;
         this.password = password;
         this.email = email;
     }
 
-    public Person(String userName, String password, String email, GenderEnum genderEnum, String address){
+    public Person(String userName, String password, String email, GenderEnum genderEnum, String address, String fullName, String phone, LocalDate dateOfBirth){
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.genderEnum = genderEnum;
         this.address = address;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.dateOfBirth = dateOfBirth;
     }
 }

@@ -29,5 +29,11 @@ public interface ProductService {
 
     Page<Product> findAllBySubCategoryName(String brandName, int size, int page, String sortBy);
 
+    Page<Product> filterProduct(List<String> categories,
+                                List<String> subCategories,
+                                int firstPrice,
+                                int secondPrice, int page,
+                                int size, String sortBy, String searchText);
+
 
 }

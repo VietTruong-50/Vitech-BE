@@ -67,11 +67,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<Comment> getCommentPagination(Long filmId, int page, int size, String sortBy, String orderBy) {
+    public Page<Comment> getCommentPagination(Long productId, int page, int size, String sortBy, String orderBy) {
 //        if (!Objects.equals(orderBy, "ASC") && !Objects.equals(orderBy, "DSC")) {
 //
 //        }
-        var product = productRepository.findById(filmId);
+        var product = productRepository.findById(productId);
 
         if(product.isPresent()){
             switch (orderBy) {

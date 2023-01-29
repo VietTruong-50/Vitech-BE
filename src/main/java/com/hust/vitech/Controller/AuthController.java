@@ -1,8 +1,7 @@
 package com.hust.vitech.Controller;
 
-import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.LoginRequest;
-import com.hust.vitech.Request.SignupRequest;
+import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Response.JwtResponse;
 import com.hust.vitech.Service.Impl.UserServiceImpl;
@@ -31,13 +30,18 @@ public class AuthController {
 //    }
 
     @PostMapping(value = "/register", produces = "application/json")
-    public ApiResponse<?> register(@Valid @RequestBody SignupRequest signupRequest) {
+    public ApiResponse<?> register(@Valid @RequestBody UserRequest signupRequest) {
         return userService.register(signupRequest);
     }
 
     @GetMapping(value = "account", produces = "application/json")
     public ApiResponse<?> getCurrentUser() {
         return ApiResponse.successWithResult(userService.getCurrentUser());
+    }
+
+    @PutMapping(value = "account", produces =  "application/json")
+    public ApiResponse<?> updateProfile(@RequestBody UserRequest userRequest){
+        return ApiResponse.successWithResult(userService.updateProfile(userRequest));
     }
 
 }
