@@ -11,7 +11,9 @@ public interface OrderService {
     Order updateOrderStatus(Long orderId, OrderStatusEnum statusEnum);
     void destroyOrder(Long orderId);
 
-    List<Order> getCurrentOrders();
+    List<Order> getCurrentOrdersByStatus(OrderStatusEnum orderStatusEnum);
 
     Order getOrderByCode(String code);
+
+    List<Order> autoUpdateOrdersStatus();
 }

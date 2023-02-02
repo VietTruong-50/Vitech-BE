@@ -19,5 +19,4 @@ public interface CartService {
 
     ShoppingSession createShoppingSession();
 
-    void updateCartItem(Long itemId, int quantity);
 }

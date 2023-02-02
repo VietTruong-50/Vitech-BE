@@ -1,5 +1,6 @@
 package com.hust.vitech.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hust.vitech.Enum.GenderEnum;
 import lombok.Getter;

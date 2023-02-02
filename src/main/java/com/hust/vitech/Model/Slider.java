@@ -18,7 +18,7 @@ public class Slider extends BaseModel{
 
     private String description;
 
-    @Column(nullable = true, length = 64)
+    @Column(length = 64)
     private String imageName;
 
 }

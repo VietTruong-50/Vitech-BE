@@ -23,15 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE c.name = ?1")
     Page<Product> findAllByCategoryName(Pageable pageable, String categoryName);
 
-    //Tim san pham
-    @Query(value = "SELECT * FROM products p " +
-            "JOIN sub_categories b ON b.id = p.subCate_id " +
-            "JOIN categories c ON c.id = b.category_id " +
-            "WHERE (c.name REGEXP ?1) AND (p.name REGEXP ?2 " +
-            "OR p.product_code REGEXP ?2 " +
-            "OR b.sub_cate_name REGEXP ?2)", nativeQuery = true)
-    Page<Product> searchProduct(Pageable pageable, Long categoryId, String textSearch);
-
     //Tim tat ca sp cung hang
     Page<Product> findAllBySubCategory_SubCateName(Pageable pageable, String cateName);
 

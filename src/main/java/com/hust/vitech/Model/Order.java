@@ -3,13 +3,12 @@ package com.hust.vitech.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hust.vitech.Enum.OrderStatusEnum;
+import com.hust.vitech.Enum.PaymentMethodEnum;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
@@ -28,8 +27,8 @@ public class Order {
     private Double total;
 
     private OrderStatusEnum status;
-
-    private LocalDate deliverDate;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate deliveryDate;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate orderDate;
@@ -38,6 +37,16 @@ public class Order {
     @JoinColumn(name = "shipping_id")
     private ShippingMethod shippingMethod;
 
+    @ManyToOne
+    @JoinColumn(name = "card_payment_id")
+    private CardPayment cardPayment;
+
+    private PaymentMethodEnum paymentMethodEnum;
+
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "order")
+    @JsonIgnore
+    private List<Notification> notifications;
 }

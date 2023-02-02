@@ -1,12 +1,9 @@
 package com.hust.vitech.Controller;
 
-import com.hust.vitech.Model.Comment;
-import com.hust.vitech.Model.Order;
-import com.hust.vitech.Model.Product;
-import com.hust.vitech.Model.ShoppingSession;
+import com.hust.vitech.Enum.OrderStatusEnum;
+import com.hust.vitech.Model.*;
 import com.hust.vitech.Request.CartItemRequest;
 import com.hust.vitech.Request.CommentRequest;
-import com.hust.vitech.Request.FilterRequest;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Response.ApiResponse;
 import com.hust.vitech.Service.Impl.*;
@@ -34,6 +31,9 @@ public class CustomerController {
 
     @Autowired
     private ProductServiceImpl productService;
+
+    @Autowired
+    private CustomerServiceImpl customerService;
 
 
     @GetMapping(value = "/cart", produces = "application/json")
@@ -69,8 +69,8 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/orders", produces = "application/json")
-    public ApiResponse<List<Order>> getCurrentOrders() {
-        return ApiResponse.successWithResult(orderService.getCurrentOrders());
+    public ApiResponse<List<Order>> getCurrentOrders(@RequestParam("status") OrderStatusEnum orderStatusEnum) {
+        return ApiResponse.successWithResult(orderService.getCurrentOrdersByStatus(orderStatusEnum));
     }
 
     @GetMapping(value = "/orders/{orderCode}", produces = "application/json")
@@ -127,4 +127,8 @@ public class CustomerController {
         return ApiResponse.successWithResult(productService.filterProduct(categories, subCategories, firstPrice, secondPrice, page, size, sortBy, searchText));
     }
 
+    @GetMapping(value = "/notifications", produces = "application/json")
+    public ApiResponse<List<Notification>> getAllNotifications(){
+        return ApiResponse.successWithResult(customerService.getAllNotificationsByCustomer());
+    }
 }

@@ -1,6 +1,5 @@
 package com.hust.vitech.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -17,7 +16,7 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(
-        value = {"createdAt", "updatedAt", "createdBy", "updatedBy"}
+        value = { "updatedAt", "createdBy", "updatedBy"}
 )
 public class BaseModel implements Serializable {
 

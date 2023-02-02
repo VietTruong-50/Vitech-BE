@@ -41,11 +41,6 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCartItem(Long itemId, int quantity) {
-
-    }
-
-    @Override
     public ShoppingSession addItemToCart(CartItemRequest cartItemRequest) {
 
         ShoppingSession shoppingSession = getShoppingCart();

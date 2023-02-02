@@ -23,8 +23,6 @@ public class UserRequest {
 
     private LocalDate dateOfBirth;
 
-    private double salary;
-
     private List<String> roles;
 
     private boolean isCustomer;

@@ -1,5 +1,5 @@
 package com.hust.vitech.Enum;
 
-public enum PayMethodEnum {
+public enum PaymentMethodEnum {
     ONLINE_PAYING, DELIVERY_PAYING
 }

@@ -30,8 +30,9 @@ public class UserController {
         return ApiResponse.successWithResult(userService.getAllUser(size, page, sortBy));
     }
 
-    @PostMapping(value="/order/{orderId}")
-    public ApiResponse<Order> changeOrderStatus(@PathVariable("orderId") Long orderId, @RequestParam("status") OrderStatusEnum orderStatusEnum){
+    @PutMapping(value="/order/{orderId}")
+    public ApiResponse<Order> changeOrderStatus(@PathVariable("orderId") Long orderId,
+                                                @RequestParam("status") OrderStatusEnum orderStatusEnum){
         return ApiResponse.successWithResult(orderService.updateOrderStatus(orderId, orderStatusEnum));
     }
 
