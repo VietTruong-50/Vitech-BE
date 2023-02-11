@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,8 +35,6 @@ public class Person extends BaseModel{
 
     private GenderEnum genderEnum;
 
-    private String address;
-
     private String phone;
 
     private LocalDate dateOfBirth;
@@ -46,12 +45,11 @@ public class Person extends BaseModel{
         this.email = email;
     }
 
-    public Person(String userName, String password, String email, GenderEnum genderEnum, String address, String fullName, String phone, LocalDate dateOfBirth){
+    public Person(String userName, String password, String email, GenderEnum genderEnum, String fullName, String phone, LocalDate dateOfBirth){
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.genderEnum = genderEnum;
-        this.address = address;
         this.fullName = fullName;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;

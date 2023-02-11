@@ -13,5 +13,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findAllByCustomer(Customer customer);
 
-    boolean existsByMessageAndOrder(String message, Order order);
+    Notification findByMessageAndOrder(String message, Order order);
+    Notification findByOrderId(Long orderId);
 }

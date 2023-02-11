@@ -2,14 +2,10 @@ package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Jwt.JwtUtils;
 import com.hust.vitech.Model.*;
-import com.hust.vitech.Repository.CustomerRepository;
-import com.hust.vitech.Repository.RoleRepository;
-import com.hust.vitech.Repository.UserRepository;
+import com.hust.vitech.Repository.*;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.UserRequest;
-import com.hust.vitech.Response.ApiResponse;
-import com.hust.vitech.Response.JwtResponse;
-import com.hust.vitech.Response.MessageResponse;
+import com.hust.vitech.Response.*;
 import com.hust.vitech.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -35,7 +31,13 @@ public class UserServiceImpl implements UserService {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -127,8 +129,7 @@ public class UserServiceImpl implements UserService {
 
             Customer customer = new Customer(signupRequest.getUserName(),
                     passwordEncoder.encode(signupRequest.getPassword()),
-                    signupRequest.getEmail(), signupRequest.getGenderEnum(),
-                    signupRequest.getAddress(), "ROLE_CUSTOMER",
+                    signupRequest.getEmail(), signupRequest.getGenderEnum(), "ROLE_CUSTOMER",
                     signupRequest.getFullName(), signupRequest.getPhone(), signupRequest.getDateOfBirth());
 
             return ApiResponse.successWithResult(customerRepository.save(customer));
@@ -157,7 +158,6 @@ public class UserServiceImpl implements UserService {
             user.get().setUserName(userRequest.getUserName());
             user.get().setPassword(userRequest.getPassword());
             user.get().setEmail(userRequest.getEmail());
-            user.get().setAddress(userRequest.getAddress());
 
             Set<Role> roles = new HashSet<>();
 
@@ -183,25 +183,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse<?> updateProfile(UserRequest userRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         User user = null;
         Customer customer = null;
+
         if (userRepository.existsByUserName(authentication.getName())) {
             user = userRepository.findUserByUserName(authentication.getName()).get();
         } else if (customerRepository.existsByUserName(authentication.getName())) {
             customer = customerRepository.findCustomerByUserName(authentication.getName()).get();
         }
 
-        if(customer != null){
+        if (customer != null) {
             customer.setEmail(userRequest.getEmail());
-            customer.setAddress(userRequest.getAddress());
             customer.setFullName(userRequest.getFullName());
             customer.setGenderEnum(userRequest.getGenderEnum());
             customer.setFullName(userRequest.getFullName());
             customer.setDateOfBirth(userRequest.getDateOfBirth());
 
             return ApiResponse.successWithResult(customerRepository.save(customer));
-        }else if (user != null){
-            user.setAddress(userRequest.getAddress());
+        } else if (user != null) {
             user.setFullName(userRequest.getFullName());
             user.setGenderEnum(userRequest.getGenderEnum());
             user.setFullName(userRequest.getFullName());
@@ -233,6 +233,41 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
         return userRepository.findAllByRole(role, pageable);
+    }
+
+    @Override
+    public Page<Customer> findAllCustomer(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return customerRepository.findAll(pageable);
+    }
+
+    @Override
+    public StatisticQuantityResponse getStatistic() {
+        List<Customer> customers = customerRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        return new StatisticQuantityResponse(products.size(), customers.size(), orders.size());
+    }
+
+    @Override
+    public StatisticValueResponse getValuesByMonth() {
+        StatisticValueResponse statisticValueResponse = new StatisticValueResponse();
+
+        List<Double> saleStatistic = new ArrayList<>();
+        for(int i = 1; i <= 12; i++){
+            saleStatistic.add(userRepository.getTotalValueByMonth(i));
+        }
+
+        List<Integer> orderStatistic = new ArrayList<>();
+        for(int i = 1; i <= 4; i++){
+            orderStatistic.add(userRepository.getOrderByStatusInMonth(i));
+        }
+
+        statisticValueResponse.setSaleStatistic(saleStatistic);
+        statisticValueResponse.setOrderStatistic(orderStatistic);
+
+        return statisticValueResponse;
     }
 
 //    @Override

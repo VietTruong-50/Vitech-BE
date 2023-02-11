@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findProductByProductCode(String code);
 
     //Cac san pham lien quan
-    List<Product> findTop8BySubCategory_SubCateName(String subCateName);
+    List<Product> findTop10BySubCategory_SubCateNameContaining(String subCateName);
 
     @Query(value = "select * from products p" +
             " join sub_categories sc on sc.id = p.sub_cate_id" +

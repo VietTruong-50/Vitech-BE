@@ -96,6 +96,11 @@ public class ProductController {
         return ApiResponse.successWithResult(productService.findAllBySubCategoryName(subCate, page, size, sortBy));
     }
 
+    @GetMapping(value = "/products/10/subCategory/{subCate}", produces = "application/json")
+    public ApiResponse<List<Product>> findTop8BySubCategoryName(@PathVariable("subCate") String subCate) {
+        return ApiResponse.successWithResult(productService.findTop8ProductsByBrandName(subCate));
+    }
+
     @GetMapping(value = "/products/categories/{categoryName}", produces = "application/json")
     public ApiResponse<Page<Product>> findProductsByCategoryName(@PathVariable("categoryName") String categoryName,
                                                                  @RequestParam int size,

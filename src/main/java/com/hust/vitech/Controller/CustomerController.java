@@ -2,13 +2,14 @@ package com.hust.vitech.Controller;
 
 import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Model.*;
-import com.hust.vitech.Request.CartItemRequest;
-import com.hust.vitech.Request.CommentRequest;
-import com.hust.vitech.Request.OrderRequest;
+import com.hust.vitech.Repository.AddressRepository;
+import com.hust.vitech.Request.*;
 import com.hust.vitech.Response.ApiResponse;
+import com.hust.vitech.Response.CustomCustomerResponse;
 import com.hust.vitech.Service.Impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,9 @@ public class CustomerController {
 
     @Autowired
     private ProductServiceImpl productService;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Autowired
     private CustomerServiceImpl customerService;
@@ -69,8 +73,11 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/orders", produces = "application/json")
-    public ApiResponse<List<Order>> getCurrentOrders(@RequestParam("status") OrderStatusEnum orderStatusEnum) {
-        return ApiResponse.successWithResult(orderService.getCurrentOrdersByStatus(orderStatusEnum));
+    public ApiResponse<Page<Order>> getCurrentOrders(@RequestParam("status") OrderStatusEnum orderStatusEnum,
+                                                     @RequestParam int page,
+                                                     @RequestParam int size,
+                                                     @RequestParam String sortBy) {
+        return ApiResponse.successWithResult(orderService.getCurrentOrdersByStatus(orderStatusEnum, page, size, sortBy));
     }
 
     @GetMapping(value = "/orders/{orderCode}", produces = "application/json")
@@ -128,7 +135,47 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/notifications", produces = "application/json")
-    public ApiResponse<List<Notification>> getAllNotifications(){
+    public ApiResponse<List<Notification>> getAllNotifications() {
         return ApiResponse.successWithResult(customerService.getAllNotificationsByCustomer());
+    }
+
+    @PostMapping(value = "/address", produces = "application/json")
+    public ApiResponse<Address> createNewAddress(@RequestBody AddressRequest addressRequest) {
+        return ApiResponse.successWithResult(customerService.createNewAddress(addressRequest));
+    }
+
+    @PutMapping(value = "/address/{addressId}", produces = "application/json")
+    public ApiResponse<Address> editAddress(@PathVariable("addressId") Long addressId, @RequestBody AddressRequest addressRequest) {
+        return ApiResponse.successWithResult(customerService.editAddress(addressId, addressRequest));
+    }
+
+    @DeleteMapping(value = "/address/{addressId}", produces = "application/json")
+    public ApiResponse<Address> deleteAddress(@PathVariable("addressId") Long addressId) {
+        return ApiResponse.successWithResult(customerService.deleteAddress(addressId));
+    }
+
+    @GetMapping(value = "/address/default", produces = "application/json")
+    public ApiResponse<Address> getDefaultAddress() {
+        return ApiResponse.successWithResult(customerService.getDefaultAddress());
+    }
+
+    @GetMapping(value = "/address", produces = "application/json")
+    public ApiResponse<List<Address>> getAllAddress() {
+        return ApiResponse.successWithResult(customerService.getListAddress());
+    }
+
+    @GetMapping(value = "/detail/{id}", produces = "application/json")
+    public ApiResponse<CustomCustomerResponse> getCustomerById(@PathVariable("id") Long id) {
+        return ApiResponse.successWithResult(customerService.getCustomerById(id));
+    }
+
+    @PutMapping(value = "/detail/{id}", produces = "application/json")
+    public ApiResponse<Customer> editCustomer(@PathVariable("id") Long id, @RequestBody CustomerRequest customerRequest) {
+        return ApiResponse.successWithResult(customerService.editCustomer(id, customerRequest));
+    }
+
+    @GetMapping(value = "/address/{addressId}", produces = "application/json")
+    public ApiResponse<Address> getAddressById(@PathVariable("addressId") Long addressId) {
+        return ApiResponse.successWithResult(addressRepository.findById(addressId).orElseThrow(() -> new ResourceNotFoundException("Address not found")));
     }
 }

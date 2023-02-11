@@ -116,6 +116,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findTop8ProductsByBrandName(String brandName) {
+        return productRepository.findTop10BySubCategory_SubCateNameContaining(brandName);
+    }
+
+    @Override
     public List<Product> findProductsByBrandName(String brandName) {
 //        return productRepository.findTop4ByBrand_BrandName(brandName);
         return null;

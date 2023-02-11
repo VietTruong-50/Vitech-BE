@@ -25,6 +25,9 @@ public interface ProductService {
 
     List<Product> findProductsByBrandName(String brandName);
 
+    List<Product> findTop8ProductsByBrandName(String brandName);
+
+
     Page<Product> findProductsByCategoryName(String categoryName, int size, int page, String sortBy);
 
     Page<Product> findAllBySubCategoryName(String brandName, int size, int page, String sortBy);

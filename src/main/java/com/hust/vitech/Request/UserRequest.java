@@ -17,8 +17,6 @@ public class UserRequest {
 
     private GenderEnum genderEnum;
 
-    private String address;
-
     private String phone;
 
     private LocalDate dateOfBirth;

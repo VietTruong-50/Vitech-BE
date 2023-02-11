@@ -19,6 +19,10 @@ import java.util.Set;
 @Table(name = "customers")
 public class Customer extends Person{
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<Address> address;
+
     private String role;
 
     @JsonIgnore
@@ -37,9 +41,10 @@ public class Customer extends Person{
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Set<Comment> comments;
+
     public Customer(String userName, String password, String email,
-                    GenderEnum genderEnum, String address, String role, String fullName, String phone, LocalDate dateOfBirth){
-        super(userName, password, email, genderEnum, address, fullName, phone, dateOfBirth);
+                    GenderEnum genderEnum, String role, String fullName, String phone, LocalDate dateOfBirth){
+        super(userName, password, email, genderEnum, fullName, phone, dateOfBirth);
         this.role = role;
     }
 

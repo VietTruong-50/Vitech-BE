@@ -15,6 +15,8 @@ public class ProductRequest {
 
     private String parameters;
 
+    private String shortDescription;
+
     private String content;
 
     private Double actualPrice;
@@ -43,6 +45,7 @@ public class ProductRequest {
         product.setProductImages(this.getProductImages());
         product.setQuantity(this.getQuantity());
         product.setFeatureImageByte(this.getFeatureImageByte());
+        product.setShortDescription(this.getShortDescription());
 
         return product;
     }

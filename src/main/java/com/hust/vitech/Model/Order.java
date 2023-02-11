@@ -27,10 +27,10 @@ public class Order {
     private Double total;
 
     private OrderStatusEnum status;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+//    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate deliveryDate;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+//    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate orderDate;
 
     @ManyToOne
@@ -42,6 +42,9 @@ public class Order {
     private CardPayment cardPayment;
 
     private PaymentMethodEnum paymentMethodEnum;
+
+    @OneToOne
+    private Address address;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
