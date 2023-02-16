@@ -20,4 +20,10 @@ public class CardPayment extends BaseModel {
 
     private String cardNumber;
 
+    private String cardOwner;
+
+    private String month;
+
+    private String year;
+
 }

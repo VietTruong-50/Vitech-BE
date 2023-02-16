@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -77,6 +78,9 @@ public class OrderServiceImpl implements OrderService {
 
                 cardPayment.setCardNumber(orderRequest.getCardNumber());
                 cardPayment.setCustomer(customer);
+                cardPayment.setCardOwner(orderRequest.getCardOwner());
+                cardPayment.setMonth(orderRequest.getMonth());
+                cardPayment.setYear(orderRequest.getYear());
 
                 cardPaymentRepository.save(cardPayment);
             }
@@ -184,9 +188,13 @@ public class OrderServiceImpl implements OrderService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-        Customer customer = customerRepository.findCustomerByUserName(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Optional<Customer> customer = customerRepository.findCustomerByUserName(authentication.getName());
 
-        return orderRepository.findAllByCustomerAndStatus(pageable, customer, orderStatusEnum);
+        if (customer.isPresent()) {
+            return orderRepository.findAllByCustomerAndStatus(pageable, customer.get(), orderStatusEnum);
+        } else {
+            return orderRepository.findAllByStatus(pageable, orderStatusEnum);
+        }
     }
 
     @Override
@@ -239,6 +247,12 @@ public class OrderServiceImpl implements OrderService {
         order.setDeliveryDate(orderRequest.getDeliveryDate());
 
         return order;
+    }
+
+    @Override
+    public Page<Order> searchOrdersByOrderCode(String orderCode, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return orderRepository.findAllByOrderCodeContaining(pageable, orderCode);
     }
 
     private String randomString() {

@@ -43,7 +43,8 @@ public class Order {
 
     private PaymentMethodEnum paymentMethodEnum;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @OneToMany(mappedBy = "order")

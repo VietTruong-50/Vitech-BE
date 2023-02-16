@@ -27,18 +27,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllBySubCategory_SubCateName(Pageable pageable, String cateName);
 
     //Xem chi tiet san pham
-    Product findProductByProductCode(String code);
+    Page<Product> findAllByProductCodeContaining(Pageable pageable, String code);
 
     //Cac san pham lien quan
     List<Product> findTop10BySubCategory_SubCateNameContaining(String subCateName);
 
-    @Query(value = "select * from products p" +
-            " join sub_categories sc on sc.id = p.sub_cate_id" +
-            " join categories c on c.id = sc.category_id" +
-            " where c.name REGEXP ?1 and sc.sub_cate_name REGEXP ?2" +
-            " and p.actual_price between ?3 and ?4", nativeQuery = true)
-    Page<Product> filterProduct(Pageable pageable, String categoryName, String subCateName,
-                                                     Double firstPrice, Double secondPrice);
 }
 
 

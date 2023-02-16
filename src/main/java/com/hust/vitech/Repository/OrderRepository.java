@@ -14,5 +14,9 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByCustomerAndStatus(Pageable pageable, Customer customer, OrderStatusEnum orderStatusEnum);
 
+    Page<Order> findAllByStatus(Pageable pageable, OrderStatusEnum orderStatusEnum);
+
     Order findByOrderCode(String orderCode);
+
+    Page<Order> findAllByOrderCodeContaining(Pageable pageable, String orderCode);
 }

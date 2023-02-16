@@ -15,6 +15,12 @@ public class OrderRequest {
 
     private String cardNumber;
 
+    private String cardOwner;
+
+    private String month;
+
+    private String year;
+
     private Long addressId;
 
     private OrderStatusEnum orderStatusEnum;

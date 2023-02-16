@@ -243,6 +243,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<Customer> searchAllCustomer(String searchText, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return customerRepository.findAllByUserNameOrPhoneOrEmailContains(searchText, pageable);
+    }
+
+    @Override
     public StatisticQuantityResponse getStatistic() {
         List<Customer> customers = customerRepository.findAll();
         List<Order> orders = orderRepository.findAll();

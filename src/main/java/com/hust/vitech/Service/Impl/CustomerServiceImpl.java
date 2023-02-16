@@ -48,6 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.isPresent()) {
             Address address = new Address();
 
+            address.setReceiverName(addressRequest.getReceiverName());
+            address.setPhone(addressRequest.getPhone());
+            address.setEmail(addressRequest.getEmail());
             address.setCity(addressRequest.getCity());
             address.setSubDistrict(addressRequest.getSubDistrict());
             address.setDistrict(addressRequest.getDistrict());
@@ -90,6 +93,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.isPresent()) {
             Address address = addressRepository.findById(addressId).get();
 
+            address.setReceiverName(addressRequest.getReceiverName());
+            address.setPhone(addressRequest.getPhone());
+            address.setEmail(addressRequest.getEmail());
             address.setCity(addressRequest.getCity());
             address.setSubDistrict(addressRequest.getSubDistrict());
             address.setDistrict(addressRequest.getDistrict());
@@ -148,8 +154,11 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setGenderEnum(customerRequest.getGenderEnum());
         customer.setDateOfBirth(customerRequest.getDateOfBirth());
 
-        Address address = addressRepository.findById(customerRequest.getAddressId()).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Address address = addressRepository.findById(customerRequest.getAddressId()).orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
+        address.setReceiverName(customerRequest.getAddressRequest().getReceiverName());
+        address.setPhone(customerRequest.getAddressRequest().getPhone());
+        address.setEmail(customerRequest.getAddressRequest().getEmail());
         address.setCity(customerRequest.getAddressRequest().getCity());
         address.setDistrict(customerRequest.getAddressRequest().getDistrict());
         address.setSubDistrict(customerRequest.getAddressRequest().getSubDistrict());

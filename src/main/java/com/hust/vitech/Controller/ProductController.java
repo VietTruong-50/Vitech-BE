@@ -115,5 +115,10 @@ public class ProductController {
         return ApiResponse.successWithResult(null, "Delete success");
     }
 
-
+    @GetMapping(value = "/products/productCode/{productCode}", produces = "application/json")
+    public ApiResponse<Page<Product>> getAllProductsByCode(@PathVariable("productCode") String productCode, @RequestParam int page,
+                                                           @RequestParam int size,
+                                                           @RequestParam String sortBy) {
+        return ApiResponse.successWithResult(productService.findAllByProductCodeContaining(productCode, page, size, sortBy));
+    }
 }

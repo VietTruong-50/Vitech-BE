@@ -194,4 +194,11 @@ public class ProductServiceImpl implements ProductService {
 
         return new PageImpl<>(result, pageable, result.size());
     }
+
+    @Override
+    public Page<Product> findAllByProductCodeContaining(String productCode, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return productRepository.findAllByProductCodeContaining(pageable, productCode);
+    }
 }

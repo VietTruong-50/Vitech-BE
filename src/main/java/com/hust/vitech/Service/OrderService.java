@@ -21,4 +21,6 @@ public interface OrderService {
     List<Order> autoUpdateOrdersStatus();
 
     Order updateOrder(Long orderId, OrderRequest orderRequest);
+
+    Page<Order> searchOrdersByOrderCode(String orderCode, int page, int size, String sortBy);
 }

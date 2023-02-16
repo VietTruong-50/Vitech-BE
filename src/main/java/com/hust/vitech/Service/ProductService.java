@@ -38,5 +38,5 @@ public interface ProductService {
                                 int secondPrice, int page,
                                 int size, String sortBy, String searchText);
 
-
+    Page<Product> findAllByProductCodeContaining(String productCode, int page, int size, String sortBy);
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,10 @@ public class Address {
     private String specificAddress;
 
     private boolean isDefault;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "address")
+    private List<Order> orders;
 
     @JsonIgnore
     @ManyToOne

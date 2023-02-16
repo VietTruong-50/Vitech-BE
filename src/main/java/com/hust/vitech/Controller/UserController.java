@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/api")
@@ -55,6 +53,13 @@ public class UserController {
         return ApiResponse.successWithResult(orderService.getAllOrders(page, size, sortBy));
     }
 
+    @GetMapping(value = "/admin/orders/{orderCode}", produces = "application/json")
+    public ApiResponse<Page<Order>> getAllOrdersByCode(@PathVariable("orderCode") String orderCode, @RequestParam int page,
+                                                       @RequestParam int size,
+                                                       @RequestParam String sortBy) {
+        return ApiResponse.successWithResult(orderService.searchOrdersByOrderCode(orderCode, page, size, sortBy));
+    }
+
     @PutMapping(value = "/user/{userId}", produces = "application/json")
     public ApiResponse<User> updateUser(@PathVariable("userId") Long userId, @RequestBody UserRequest userRequest) {
         return ApiResponse.successWithResult(userService.updateUser(userId, userRequest));
@@ -84,6 +89,13 @@ public class UserController {
                                                         @RequestParam int size,
                                                         @RequestParam String sortBy) {
         return ApiResponse.successWithResult(userService.findAllCustomer(page, size, sortBy));
+    }
+
+    @GetMapping(value = "/customers/{searchText}", produces = "application/json")
+    public ApiResponse<Page<Customer>> searchAllCustomers(@PathVariable("searchText")String searchText, @RequestParam int page,
+                                                        @RequestParam int size,
+                                                        @RequestParam String sortBy) {
+        return ApiResponse.successWithResult(userService.searchAllCustomer(searchText, page, size, sortBy));
     }
 
     @GetMapping(value = "/quantity", produces = "application/json")

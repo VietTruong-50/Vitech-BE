@@ -27,17 +27,17 @@ public class Product extends BaseModel{
     @Column(length = 1000)
     private String productCode;
 
-    @Column(length = 1000)
+    @Column(length = 100000)
     private String parameters;
 
-    @Column(length = 1000)
+    @Column(length = 100000)
     private String content;
 
     private int quantity;
 
     @Column(name = "actual_price")
     private Double actualPrice;
-
+    @Column(length = 100000)
     private String shortDescription;
 
     @Column(name = "feature_image_name")

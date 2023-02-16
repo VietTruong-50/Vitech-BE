@@ -10,8 +10,6 @@ import com.hust.vitech.Response.StatisticQuantityResponse;
 import com.hust.vitech.Response.StatisticValueResponse;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface UserService {
     Page<User> getAllUser(int size, int page, String sortBy);
 
@@ -34,6 +32,8 @@ public interface UserService {
     Page<User> filterUserByRole(String role, int page, int size, String sortBy);
 
     Page<Customer> findAllCustomer(int page, int size, String sortBy);
+
+    Page<Customer> searchAllCustomer(String searchText, int page, int size, String sortBy);
 
     StatisticQuantityResponse getStatistic();
 
