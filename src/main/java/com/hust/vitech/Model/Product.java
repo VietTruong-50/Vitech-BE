@@ -61,6 +61,10 @@ public class Product extends BaseModel{
     @JoinColumn(name = "sub_cate_id")
     private SubCategory subCategory;
 
+    @ManyToOne
+    @JoinColumn(name = "cate_id")
+    private Category category;
+
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems;

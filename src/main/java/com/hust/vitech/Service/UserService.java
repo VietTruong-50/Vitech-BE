@@ -4,11 +4,10 @@ import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.UserRequest;
-import com.hust.vitech.Response.ApiResponse;
-import com.hust.vitech.Response.JwtResponse;
-import com.hust.vitech.Response.StatisticQuantityResponse;
-import com.hust.vitech.Response.StatisticValueResponse;
+import com.hust.vitech.Response.*;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface UserService {
     Page<User> getAllUser(int size, int page, String sortBy);
@@ -38,4 +37,5 @@ public interface UserService {
     StatisticQuantityResponse getStatistic();
 
     StatisticValueResponse getValuesByMonth();
+
 }

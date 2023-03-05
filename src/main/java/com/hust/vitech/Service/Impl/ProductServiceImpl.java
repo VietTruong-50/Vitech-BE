@@ -129,7 +129,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> findProductsByCategoryName(String categoryName, int size, int page, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return productRepository.findAllByCategoryName(pageable, categoryName);
+
+        List<Product> products = productRepository.findAllByCategoryName(categoryName);
+        return new PageImpl<>(products, pageable, products.size());
     }
 
     @Override
@@ -154,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
         CriteriaQuery<Product> criteriaQuery = criteriaBuilder.createQuery(Product.class);
         Root<Product> root = criteriaQuery.from(Product.class);
         Join<Product, SubCategory> prd_sbc = root.join("subCategory");
-        Join<SubCategory, Category> sbc_ct = prd_sbc.join("category");
+        Join<Product, Category> prd_ct = root.join("category");
         List<Predicate> conditions = new ArrayList<>();
 
         if (subCategories != null) {
@@ -173,7 +175,7 @@ public class ProductServiceImpl implements ProductService {
             List<Predicate> predicatesIds = new ArrayList<>();
 
             for (String name : categories) {
-                predicatesIds.add(criteriaBuilder.equal(sbc_ct.get("name"), name));
+                predicatesIds.add(criteriaBuilder.equal(prd_ct.get("name"), name));
             }
 
             conditions.add(criteriaBuilder.or(predicatesIds.toArray(new Predicate[]{})));

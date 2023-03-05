@@ -8,7 +8,10 @@ import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.*;
 import com.hust.vitech.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,28 +28,23 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CartServiceImpl cartService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Page<User> getAllUser(int size, int page, String sortBy) {
@@ -130,7 +128,8 @@ public class UserServiceImpl implements UserService {
             Customer customer = new Customer(signupRequest.getUserName(),
                     passwordEncoder.encode(signupRequest.getPassword()),
                     signupRequest.getEmail(), signupRequest.getGenderEnum(), "ROLE_CUSTOMER",
-                    signupRequest.getFullName(), signupRequest.getPhone(), signupRequest.getDateOfBirth());
+                    signupRequest.getFullName(), signupRequest.getPhone(), signupRequest.getDateOfBirth(),
+                    cartService.createShoppingSession());
 
             return ApiResponse.successWithResult(customerRepository.save(customer));
 
@@ -262,13 +261,13 @@ public class UserServiceImpl implements UserService {
         StatisticValueResponse statisticValueResponse = new StatisticValueResponse();
 
         List<Double> saleStatistic = new ArrayList<>();
-        for(int i = 1; i <= 12; i++){
+        for (int i = 1; i <= 12; i++) {
             saleStatistic.add(userRepository.getTotalValueByMonth(i));
         }
 
         List<Integer> orderStatistic = new ArrayList<>();
-        for(int i = 1; i <= 4; i++){
-            orderStatistic.add(userRepository.getOrderByStatusInMonth(i));
+        for (int i = 1; i <= 4; i++) {
+            orderStatistic.add(userRepository.getOrderByStatusInYear(i));
         }
 
         statisticValueResponse.setSaleStatistic(saleStatistic);
@@ -276,6 +275,7 @@ public class UserServiceImpl implements UserService {
 
         return statisticValueResponse;
     }
+
 
 //    @Override
 //    public Page<User> filterUserByRole(List<String> listRoles, int page, int size, String sortBy) {

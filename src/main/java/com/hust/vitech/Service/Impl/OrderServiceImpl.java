@@ -4,13 +4,12 @@ import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Enum.PaymentMethodEnum;
 import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.*;
+import com.hust.vitech.Repository.Interface.CountOrderInteface;
 import com.hust.vitech.Request.OrderRequest;
+import com.hust.vitech.Response.CountOrderResponse;
 import com.hust.vitech.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -94,23 +94,21 @@ public class OrderServiceImpl implements OrderService {
         order.setCardPayment(cardPayment);
         order.setPaymentMethodEnum(orderRequest.getPaymentMethodEnum());
         order.setAddress(address);
+        order.setTotal(shoppingSessionRepository.getTotalValues(customer.getShoppingSession().getId()));
 
         Set<CartItem> cartItems = cartItemRepository.findAllByShoppingSessionId(customer.getShoppingSession().getId());
 
         if (!cartItems.isEmpty()) {
+            orderRepository.save(order);
+
             cartItems.forEach(item -> {
                 Product product = item.getProduct();
 
-                product.setQuantity(product.getQuantity() - item.getQuantity());
-
-                orderRepository.save(order);
-
                 orderDetailRepository.save(new OrderDetail(order, product, item.getQuantity(), item.getProduct().getActualPrice()));
 
-                productRepository.save(product);
+                cartItemRepository.delete(item);
             });
         }
-        order.setTotal(shoppingSessionRepository.getTotalValues(customer.getShoppingSession().getId()));
 
         Notification notification = new Notification();
 
@@ -140,6 +138,21 @@ public class OrderServiceImpl implements OrderService {
                 message = "Đặt hàng thành công";
             }
             case SUCCESS -> {
+                List<OrderDetail> orderDetails = order.getOrderDetails();
+
+                orderDetails.forEach(item -> {
+                    Product product = productRepository.findById(item.getProduct().getId()).orElseThrow(null);
+
+                    product.setQuantity(product.getQuantity() - item.getQuantity());
+
+                    productRepository.save(product);
+                });
+
+
+                order.setInvoiceSymbol("1C22THN");
+                order.setTaxNumber("5372756200-722");
+                order.setTaxAuthoritiesCode("008B2B4F96C27C41F0BEB38CC14790AAB9");
+
                 message = "Giao hàng thành công";
             }
             case CANCEL -> {
@@ -153,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
                     productRepository.save(product);
                 });
 
-                message = "Đã huỷ";
+                message = "Huỷ thành công";
             }
         }
 
@@ -167,18 +180,20 @@ public class OrderServiceImpl implements OrderService {
         notification.setMessage(message);
         notification.setOrder(order);
 
-//        notificationRepository.save(notification);
+        notificationRepository.save(notification);
 
         return orderRepository.save(order);
     }
 
     @Override
-    public void destroyOrder(Long orderId) {
+    public Order destroyOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         orderDetailRepository.deleteAllByOrder(order);
 
         orderRepository.delete(order);
+
+        return order;
     }
 
     @Override
@@ -254,6 +269,34 @@ public class OrderServiceImpl implements OrderService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return orderRepository.findAllByOrderCodeContaining(pageable, orderCode);
     }
+
+    @Override
+    public Page<Order> statisticSuccessOrderAndOrderDateBetween(LocalDate startDate, LocalDate endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("orderDate"));
+        List<Order> orders = orderRepository.statisticSuccessOrderAndOrderDateBetween(startDate, endDate);
+        return new PageImpl<>(orders, pageable, orders.size());
+    }
+
+    @Override
+    public List<CountOrderResponse> statisticCountOrder() {
+        List<CountOrderInteface> countOrderResponses = orderRepository.statisticCountOrder();
+        List<CountOrderResponse> countOrderResponseList = new ArrayList<>();
+
+        for (CountOrderInteface co : countOrderResponses) {
+            countOrderResponseList.add(new CountOrderResponse(co.getStatus(), co.getQuantity(), co.getTotalAll()));
+        }
+
+        for (OrderStatusEnum od : OrderStatusEnum.values()) {
+            var c = countOrderResponses.stream().filter(item -> item.getStatus() == od).findFirst();
+
+            if (c.isEmpty()) {
+                countOrderResponseList.add( new CountOrderResponse(od, 0, 0));
+            }
+        }
+
+        return countOrderResponseList;
+    }
+
 
     private String randomString() {
         StringBuilder sb = new StringBuilder(12);

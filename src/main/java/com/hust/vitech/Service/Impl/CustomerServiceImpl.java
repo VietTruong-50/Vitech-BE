@@ -1,6 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.Address;
+import com.hust.vitech.Model.BaseModel;
 import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.Notification;
 import com.hust.vitech.Repository.AddressRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +39,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = customerRepository.findCustomerByUserName(authentication.getName()).get();
 
-        return notificationRepository.findAllByCustomer(customer);
+        List<Notification> notifications = notificationRepository.findAllByCustomer(customer);
+
+        notifications.sort(Comparator.comparing(BaseModel::getCreatedAt).reversed());
+
+        return notifications;
     }
 
     @Override
@@ -132,14 +138,14 @@ public class CustomerServiceImpl implements CustomerService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<Customer> customer = customerRepository.findCustomerByUserName(authentication.getName());
 
-        return customer.get().getAddress().stream().filter(item -> item != getDefaultAddress()).toList();
+        return customer.get().getAddresses().stream().filter(item -> item != getDefaultAddress()).toList();
     }
 
     @Override
     public CustomCustomerResponse getCustomerById(Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
-        List<Address> addresses = customer.getAddress();
+        List<Address> addresses = customer.getAddresses();
 
         return new CustomCustomerResponse(customer, addresses);
     }

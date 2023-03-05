@@ -21,7 +21,7 @@ public class Customer extends Person{
 
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
-    private List<Address> address;
+    private List<Address> addresses;
 
     private String role;
 
@@ -43,9 +43,10 @@ public class Customer extends Person{
     private Set<Comment> comments;
 
     public Customer(String userName, String password, String email,
-                    GenderEnum genderEnum, String role, String fullName, String phone, LocalDate dateOfBirth){
+                    GenderEnum genderEnum, String role, String fullName, String phone, LocalDate dateOfBirth, ShoppingSession shoppingSession){
         super(userName, password, email, genderEnum, fullName, phone, dateOfBirth);
         this.role = role;
+        this.shoppingSession = shoppingSession;
     }
 
 }

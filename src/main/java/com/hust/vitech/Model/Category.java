@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -25,6 +27,13 @@ public class Category extends BaseModel{
     private byte[] categoryImageByte;
 
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(joinColumns = @JoinColumn(name = "cate_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_cate_id")
+    )
+    private List<SubCategory> subCategories = new ArrayList<>();
+
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
-    private Set<SubCategory> subCategories = new HashSet<>();
+    private List<Product> products = new ArrayList<>();
 }

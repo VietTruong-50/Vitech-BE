@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -23,9 +25,8 @@ public class SubCategory extends BaseModel{
 
     @JsonIgnore
     @OneToMany(mappedBy = "subCategory")
-    private Set<Product> products = new HashSet<>();
+    private List<Product> products = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @ManyToMany(mappedBy = "subCategories")
+    private List<Category> categories;
 }

@@ -1,10 +1,9 @@
 package com.hust.vitech.Service.Impl;
 
 import com.hust.vitech.Model.Category;
-import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.SubCategory;
-import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Repository.CategoryRepository;
+import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Request.SubCategoryRequest;
 import com.hust.vitech.Service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,10 @@ import java.util.List;
 
 @Service
 public class SubCategoryServiceImpl implements SubCategoryService {
+    @PersistenceContext
+    EntityManager entityManager;
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -35,7 +35,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         SubCategory subCategory = new SubCategory();
 
         if (subCategoryRequest.getCategoryId() != null) {
-            subCategory.setCategory(
+            subCategory.getCategories().add(
                     categoryRepository.findById(subCategoryRequest.getCategoryId())
                             .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
         }
@@ -54,20 +54,17 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         return subCategoryRepository.findAll();
     }
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Override
     public List<SubCategory> getSubCategoryDataByCategory(List<String> names) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<SubCategory> criteriaQuery = criteriaBuilder.createQuery(SubCategory.class);
 
         Root<SubCategory> root = criteriaQuery.from(SubCategory.class);
-        Join<SubCategory, Category> sbc_ct = root.join("category");
+        Join<SubCategory, Category> sbc_ct = root.join("categories");
 
         List<Predicate> conditions = new ArrayList<>();
 
-        TypedQuery<SubCategory> typedQuery ;
+        TypedQuery<SubCategory> typedQuery;
 
         if (names != null) {
             for (String name : names) {
@@ -76,11 +73,12 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
             typedQuery = entityManager.createQuery(criteriaQuery
                     .select(root)
+                    .distinct(true)
                     .where(criteriaBuilder.or(conditions.toArray(new Predicate[]{})))
             );
         } else {
             typedQuery = entityManager.createQuery(criteriaQuery
-                    .select(root));
+                    .select(root).distinct(true));
         }
 
         return typedQuery.getResultList();
@@ -90,11 +88,13 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     public SubCategory updateSubCategory(Long id, SubCategoryRequest subCategoryRequest) {
         SubCategory subCategory = subCategoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
+        List<Category> categories = new ArrayList<>();
+
+        categories.add(categoryRepository.findById(subCategoryRequest.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
 
         if (subCategoryRequest.getCategoryId() != null) {
-            subCategory.setCategory(
-                    categoryRepository.findById(subCategoryRequest.getCategoryId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+            subCategory.setCategories(categories);
         }
 
         return subCategoryRepository.save(subCategoryRequest.toSubCategory(subCategory));

@@ -18,6 +18,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String invoiceSymbol;
+
+    private String taxNumber;
+
+    private String taxAuthoritiesCode;
+
     private String orderCode;
 
     @ManyToOne
