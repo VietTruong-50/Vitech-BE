@@ -1,5 +1,6 @@
 package com.hust.vitech.Controller;
 
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Request.ProductRequest;
 import com.hust.vitech.Response.ApiResponse;
@@ -27,7 +28,7 @@ public class ProductController {
     public ApiResponse<Product> createNewProduct(@RequestPart("product") ProductRequest productRequest,
                                                  @RequestPart("feature_image") MultipartFile featureImage,
                                                  @RequestPart("imageFiles") MultipartFile[] files
-    ) {
+    ) throws CustomException {
         try {
             productRequest.setProductImages(productService.uploadImages(files));
             productRequest.setFeatureImageName(featureImage.getOriginalFilename());
@@ -98,7 +99,7 @@ public class ProductController {
 
     @GetMapping(value = "/products/10/subCategory/{subCate}", produces = "application/json")
     public ApiResponse<List<Product>> findTop8BySubCategoryName(@PathVariable("subCate") String subCate) {
-        return ApiResponse.successWithResult(productService.findTop8ProductsByBrandName(subCate));
+        return ApiResponse.successWithResult(productService.findTop10ProductsBySubCateName(subCate));
     }
 
     @GetMapping(value = "/products/categories/{categoryName}", produces = "application/json")

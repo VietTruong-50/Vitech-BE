@@ -1,5 +1,6 @@
 package com.hust.vitech.Service;
 
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Request.ProductRequest;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface ProductService {
-    Product createNewProduct(ProductRequest productRequest);
+    Product createNewProduct(ProductRequest productRequest) throws CustomException;
 
     Product updateProduct(ProductRequest productRequest, Long productId);
 
@@ -25,8 +26,7 @@ public interface ProductService {
 
     List<Product> findProductsByBrandName(String brandName);
 
-    List<Product> findTop8ProductsByBrandName(String brandName);
-
+    List<Product> findTop10ProductsBySubCateName(String brandName);
 
     Page<Product> findProductsByCategoryName(String categoryName, int size, int page, String sortBy);
 

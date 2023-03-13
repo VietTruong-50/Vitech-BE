@@ -6,6 +6,7 @@ import com.hust.vitech.Model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -14,5 +15,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllByCustomer(Customer customer);
 
     Notification findByMessageAndOrder(String message, Order order);
+
+    @Transactional
+    void deleteAllByOrder(Order order);
+
     Notification findByOrderId(Long orderId);
 }

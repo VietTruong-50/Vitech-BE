@@ -1,5 +1,6 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Category;
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
@@ -36,23 +37,23 @@ public class ProductServiceImpl implements ProductService {
     private SubCategoryRepository subCategoryRepository;
 
     @Override
-    public Product createNewProduct(ProductRequest productRequest) {
-        Product product = new Product();
+    public Product createNewProduct(ProductRequest productRequest) throws CustomException {
 
-//        if (productRequest.getCategory_id() != null) {
-//            product.setCategory(
-//                    categoryRepository.findById(productRequest.getCategory_id())
-//                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
-//        }
+            Product product = new Product();
 
-        if (productRequest.getBrand_id() != null) {
+        if (productRequest.getCategoryId() != null) {
+            product.setCategory(
+                    categoryRepository.findById(productRequest.getCategoryId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+        }
+
+        if (productRequest.getSubCategoryId() != null) {
             product.setSubCategory(
-                    subCategoryRepository.findById(productRequest.getBrand_id())
+                    subCategoryRepository.findById(productRequest.getSubCategoryId())
                             .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
         }
 
-        return productRepository.save(productRequest.toProduct(product));
-
+            return productRepository.save(productRequest.toProduct(product));
     }
 
     @Override
@@ -61,15 +62,15 @@ public class ProductServiceImpl implements ProductService {
 
         if (product != null) {
 
-//            if (productRequest.getCategory_id() != null) {
-//                product.setCategory(
-//                        categoryRepository.findById(productRequest.getCategory_id())
-//                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
-//            }
+            if (productRequest.getCategoryId() != null) {
+                product.setCategory(
+                        categoryRepository.findById(productRequest.getCategoryId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+            }
 
-            if (productRequest.getBrand_id() != null) {
+            if (productRequest.getSubCategoryId() != null) {
                 product.setSubCategory(
-                        subCategoryRepository.findById(productRequest.getBrand_id())
+                        subCategoryRepository.findById(productRequest.getSubCategoryId())
                                 .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
             }
 
@@ -116,8 +117,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findTop8ProductsByBrandName(String brandName) {
-        return productRepository.findTop10BySubCategory_SubCateNameContaining(brandName);
+    public List<Product> findTop10ProductsBySubCateName(String brandName) {
+        List<Product> products = productRepository.findTop10BySubCategory_SubCateNameContaining(brandName);
+
+        if(products.size() < 10){
+
+        }
+        return products;
     }
 
     @Override

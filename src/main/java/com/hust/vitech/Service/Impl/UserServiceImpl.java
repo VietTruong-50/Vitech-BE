@@ -1,5 +1,6 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Jwt.JwtUtils;
 import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.*;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -253,7 +255,14 @@ public class UserServiceImpl implements UserService {
         List<Customer> customers = customerRepository.findAll();
         List<Order> orders = orderRepository.findAll();
         List<Product> products = productRepository.findAll();
-        return new StatisticQuantityResponse(products.size(), customers.size(), orders.size());
+
+        double revenue = 0;
+        for (Order od: orders) {
+            if(od.getStatus().equals(OrderStatusEnum.SUCCESS)){
+                revenue += od.getTotal();
+            }
+        }
+        return new StatisticQuantityResponse(products.size(), customers.size(), orders.size(), revenue);
     }
 
     @Override
@@ -274,6 +283,11 @@ public class UserServiceImpl implements UserService {
         statisticValueResponse.setOrderStatistic(orderStatistic);
 
         return statisticValueResponse;
+    }
+
+    @Override
+    public List<Product> getTop5Seller(LocalDate startDate, LocalDate endDate) {
+        return productRepository.getTop5Seller(startDate, endDate);
     }
 
 

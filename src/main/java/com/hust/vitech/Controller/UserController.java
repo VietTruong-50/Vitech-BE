@@ -3,6 +3,7 @@ package com.hust.vitech.Controller;
 import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.Order;
+import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Request.UserRequest;
@@ -129,5 +130,11 @@ public class UserController {
     @GetMapping(value = "/statistic/countOrder", produces = "application/json")
     public ApiResponse<List<CountOrderResponse>> statisticCountOrder() {
         return ApiResponse.successWithResult(orderService.statisticCountOrder());
+    }
+
+    @GetMapping(value = "/top5seller", produces = "application/json")
+    public ApiResponse<List<Product>> getTop5Seller(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate){
+        return ApiResponse.successWithResult(userService.getTop5Seller(startDate, endDate));
     }
 }

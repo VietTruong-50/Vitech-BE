@@ -9,7 +9,7 @@ import java.util.List;
 public interface CartService {
     ShoppingSession addItemToCart(CartItemRequest cartItemRequest) throws Exception;
 
-    void updateCurrentCart(List<CartItem> cartItemList);
+    List<CartItem> updateCurrentCart(List<CartItem> cartItemList);
 
     void removeItemFromCart(Long itemId);
 

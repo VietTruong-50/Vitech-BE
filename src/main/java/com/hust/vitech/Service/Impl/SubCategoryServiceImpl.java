@@ -55,7 +55,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategory> getSubCategoryDataByCategory(List<String> names) {
+    public List<SubCategory> getSubCategoryDataByCategory(List<String> names, Long categoryId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<SubCategory> criteriaQuery = criteriaBuilder.createQuery(SubCategory.class);
 
@@ -66,9 +66,13 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         TypedQuery<SubCategory> typedQuery;
 
-        if (names != null) {
-            for (String name : names) {
-                conditions.add(criteriaBuilder.equal(sbc_ct.get("name"), name));
+        if (names != null || categoryId != null) {
+            if (names != null) {
+                for (String name : names) {
+                    conditions.add(criteriaBuilder.equal(sbc_ct.get("name"), name));
+                }
+            } else {
+                conditions.add(criteriaBuilder.equal(sbc_ct.get("id"), categoryId));
             }
 
             typedQuery = entityManager.createQuery(criteriaQuery

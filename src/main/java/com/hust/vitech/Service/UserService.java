@@ -1,12 +1,14 @@
 package com.hust.vitech.Service;
 
 import com.hust.vitech.Model.Customer;
+import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.User;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.*;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface UserService {
@@ -38,4 +40,5 @@ public interface UserService {
 
     StatisticValueResponse getValuesByMonth();
 
+    List<Product> getTop5Seller(LocalDate startDate, LocalDate endDate);
 }

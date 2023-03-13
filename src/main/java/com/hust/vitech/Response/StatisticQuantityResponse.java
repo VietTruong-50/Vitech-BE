@@ -11,4 +11,6 @@ public class StatisticQuantityResponse {
     private int customerQuantity;
 
     private int orderQuantity;
+
+    private double revenue;
 }

@@ -15,6 +15,8 @@ public class ProductRequest {
 
     private String parameters;
 
+    private Long categoryId;
+
     private String shortDescription;
 
     private String content;
@@ -31,9 +33,7 @@ public class ProductRequest {
 
     private byte[] featureImageByte;
 
-//    private Long category_id;
-
-    private Long brand_id;
+    private Long subCategoryId;
 
     public Product toProduct(Product product){
         product.setName(this.getName());

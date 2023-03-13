@@ -73,7 +73,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCurrentCart(List<CartItem> cartItemList) {
+    public List<CartItem> updateCurrentCart(List<CartItem> cartItemList) {
         ShoppingSession shoppingSession = getShoppingCart();
 
         if (shoppingSession != null) {
@@ -86,8 +86,9 @@ public class CartServiceImpl implements CartService {
                 item.setItemPrice(item.getProduct().getActualPrice());
             });
 
-            cartItemRepository.saveAll(cartItemList);
+            return cartItemRepository.saveAll(cartItemList);
         }
+        return null;
     }
 
     @Override

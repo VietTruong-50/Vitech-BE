@@ -61,6 +61,15 @@ public class CustomerController {
         }
     }
 
+    @PutMapping(value = "/cart", produces = "application/json")
+    public ApiResponse< List<CartItem>> updateCurrentCart(@RequestParam(required = false) List<CartItem> cartItems) {
+        try {
+            return ApiResponse.successWithResult(cartService.updateCurrentCart(cartItems));
+        } catch (Exception e) {
+            return ApiResponse.failureWithCode("404", e.getMessage());
+        }
+    }
+
     @DeleteMapping(value = "/cart/product/{productId}", produces = "application/json")
     public ApiResponse<?> removeItemFromCart(@PathVariable("productId") Long productId) {
         cartService.removeItemFromCart(productId);
