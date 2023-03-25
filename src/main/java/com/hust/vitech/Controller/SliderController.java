@@ -1,5 +1,6 @@
 package com.hust.vitech.Controller;
 
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Slider;
 import com.hust.vitech.Request.SliderRequest;
 import com.hust.vitech.Response.ApiResponse;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class SliderController {
     private SliderServiceImpl sliderService;
 
     @PostMapping(value = "/sliders", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
-    public ApiResponse<Slider> createNewSlider(@RequestPart("slider") SliderRequest sliderRequest,
+    public ApiResponse<Slider> createNewSlider(@Valid @RequestPart("slider") SliderRequest sliderRequest,
                                                @RequestPart("image") MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
@@ -41,27 +44,23 @@ public class SliderController {
 
     @PutMapping(value = "/sliders/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
     public ApiResponse<Slider> updateSlider(@PathVariable("id") Long id,
-                                          @RequestPart("slider") SliderRequest sliderRequest,
-                                          @RequestPart("image") MultipartFile file) {
-        try {
-            String fileName = file.getOriginalFilename();
-            sliderRequest.setImageName(fileName);
-            Slider slider = sliderService.updateSlider(id, sliderRequest);
+                                          @Valid @RequestPart("slider") SliderRequest sliderRequest,
+                                          @RequestPart("image") MultipartFile file) throws IOException, CustomException {
 
-            String uploadDir =  "/sliders/" + slider.getId();
-            FileUploadUtil.saveFile(uploadDir, fileName, file);
+        String fileName = file.getOriginalFilename();
+        sliderRequest.setImageName(fileName);
+        Slider slider = sliderService.updateSlider(id, sliderRequest);
 
-            return ApiResponse.successWithResult(slider);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ApiResponse.failureWithCode("", "Bad request",null, HttpStatus.BAD_REQUEST);
-        }
+        String uploadDir =  "/sliders/" + slider.getId();
+        FileUploadUtil.saveFile(uploadDir, fileName, file);
+
+        return ApiResponse.successWithResult(slider);
     }
 
     @DeleteMapping(value = "/sliders/{id}", produces = "application/json")
-    public ApiResponse<?> deleteSlider(@PathVariable("id") Long id){
+    public ApiResponse<?> deleteSlider(@PathVariable("id") Long id) throws CustomException {
         sliderService.deleteSlider(id);
-        return ApiResponse.successWithResult(null , "Delete success");
+        return ApiResponse.successWithResult(null , "Delete slider success");
     }
 
     @GetMapping(value = "/sliders", produces = "application/json")

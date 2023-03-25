@@ -1,5 +1,8 @@
 package com.hust.vitech.Controller;
 
+import com.hust.vitech.Constants.ErrorCode;
+import com.hust.vitech.Exception.ApiException;
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Category;
 import com.hust.vitech.Request.CategoryRequest;
 import com.hust.vitech.Response.ApiResponse;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -22,29 +26,19 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping(value = "/categories", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
-    public ApiResponse<Category> createNewCategory(@RequestPart("category") CategoryRequest categoryRequest,
-                                                   @RequestPart("category_image") MultipartFile categoryImage) {
-        try {
-            categoryRequest.setCategoryImageByte(categoryImage.getBytes());
-            Category category = categoryService.createNewCategory(categoryRequest);
-            return ApiResponse.successWithResult(category);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ApiResponse.failureWithCode("", "Bad request", null, HttpStatus.BAD_REQUEST);
-        }
+    public ApiResponse<Category> createNewCategory(@Valid @RequestPart("category") CategoryRequest categoryRequest,
+                                                   @RequestPart("category_image") MultipartFile categoryImage) throws IOException {
+        categoryRequest.setCategoryImageByte(categoryImage.getBytes());
+        Category category = categoryService.createNewCategory(categoryRequest);
+        return ApiResponse.successWithResult(category);
     }
 
     @PutMapping(value = "/categories/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
     public ApiResponse<Category> updateCategory(@PathVariable("id") Long id, @Valid @RequestPart("category") CategoryRequest categoryRequest,
-                                                @RequestPart("category_image") MultipartFile categoryImage) {
-        try {
-            categoryRequest.setCategoryImageByte(categoryImage.getBytes());
-            Category category = categoryService.updateCategory(id, categoryRequest);
-            return ApiResponse.successWithResult(category);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ApiResponse.failureWithCode("", "Bad request", null, HttpStatus.BAD_REQUEST);
-        }
+                                                @RequestPart("category_image") MultipartFile categoryImage) throws CustomException, IOException {
+        categoryRequest.setCategoryImageByte(categoryImage.getBytes());
+        Category category = categoryService.updateCategory(id, categoryRequest);
+        return ApiResponse.successWithResult(category);
     }
 
     @DeleteMapping(value = "/categories/{id}", produces = "application/json")
@@ -61,7 +55,7 @@ public class CategoryController {
     }
 
     @GetMapping(value = "categories/{id}", produces = "application/json")
-    public ApiResponse<Category> getCategoryById(@PathVariable("id") Long id) {
+    public ApiResponse<Category> getCategoryById(@PathVariable("id") Long id) throws CustomException {
         return ApiResponse.successWithResult(categoryService.getCategoryById(id));
     }
 }

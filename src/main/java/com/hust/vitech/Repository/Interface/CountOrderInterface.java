@@ -2,7 +2,7 @@ package com.hust.vitech.Repository.Interface;
 
 import com.hust.vitech.Enum.OrderStatusEnum;
 
-public interface CountOrderInteface {
+public interface CountOrderInterface {
 
      OrderStatusEnum getStatus();
 

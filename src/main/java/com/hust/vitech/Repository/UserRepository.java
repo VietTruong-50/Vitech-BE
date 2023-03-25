@@ -26,6 +26,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select count(*) from orders where status = ?1 AND YEAR(CURDATE())", nativeQuery = true)
     int getOrderByStatusInYear(int status);
-
-
 }

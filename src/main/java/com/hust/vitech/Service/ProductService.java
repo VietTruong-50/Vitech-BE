@@ -14,11 +14,11 @@ import java.util.Set;
 public interface ProductService {
     Product createNewProduct(ProductRequest productRequest) throws CustomException;
 
-    Product updateProduct(ProductRequest productRequest, Long productId);
+    Product updateProduct(ProductRequest productRequest, Long productId) throws CustomException;
 
-    void deleteProduct(Long id) ;
+    void deleteProduct(Long id) throws CustomException;
 
-    Product findProductById(Long id);
+    Product findProductById(Long id) throws CustomException;
 
     Page<Product> findAll(int size, int page, String sortBy);
 

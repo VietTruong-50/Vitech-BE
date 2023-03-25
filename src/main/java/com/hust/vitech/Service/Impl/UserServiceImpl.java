@@ -4,6 +4,7 @@ import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Jwt.JwtUtils;
 import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.*;
+import com.hust.vitech.Repository.Interface.ProductTopSellerInterface;
 import com.hust.vitech.Request.LoginRequest;
 import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.*;
@@ -100,19 +101,7 @@ public class UserServiceImpl implements UserService {
                         .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                 roles.add(userRole);
             } else {
-                strRoles.forEach(
-                        role -> {
-                            if (role.equals("admin")) {
-                                Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                roles.add(adminRole);
-                            } else {
-                                Role modRole = roleRepository.findByName("ROLE_MODERATOR")
-                                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                roles.add(modRole);
-                            }
-                        }
-                );
+                roles = addRole(strRoles);
             }
 
             user.setRoles(roles);
@@ -160,25 +149,28 @@ public class UserServiceImpl implements UserService {
             user.get().setPassword(userRequest.getPassword());
             user.get().setEmail(userRequest.getEmail());
 
-            Set<Role> roles = new HashSet<>();
-
-            userRequest.getRoles().forEach(role -> {
-                if (role.equals("admin")) {
-                    Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
-                } else {
-                    Role modRole = roleRepository.findByName("ROLE_MODERATOR")
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(modRole);
-                }
-            });
-
-            user.get().setRoles(roles);
+            user.get().setRoles(addRole(userRequest.getRoles()));
 
             return userRepository.save(user.get());
         }
         return null;
+    }
+
+    public Set<Role> addRole(List<String> rolesRequest){
+        Set<Role> roles = new HashSet<>();
+
+        rolesRequest.forEach(role -> {
+            if (role.equals("admin")) {
+                Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(adminRole);
+            } else {
+                Role modRole = roleRepository.findByName("ROLE_MODERATOR")
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(modRole);
+            }
+        });
+        return roles;
     }
 
     @Override
@@ -286,25 +278,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Product> getTop5Seller(LocalDate startDate, LocalDate endDate) {
+    public List<ProductTopSellerInterface> getTop5Seller(LocalDate startDate, LocalDate endDate) {
         return productRepository.getTop5Seller(startDate, endDate);
     }
 
-
-//    @Override
-//    public Page<User> filterUserByRole(List<String> listRoles, int page, int size, String sortBy) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-//
-//        List<User> users = new ArrayList<>();
-//
-//        for (String role : listRoles) {
-//            if (role.equals("admin")) {
-//                users.addAll(userRepository.findAllByRole("ROLE_ADMIN"));
-//            } else if (role.equals("mod")) {
-//                users = userRepository.findAllByRole("ROLE_MODERATOR");
-//            }
-//        };
-//
-//        return new PageImpl<>(users, pageable, users.size());
-//    }
 }

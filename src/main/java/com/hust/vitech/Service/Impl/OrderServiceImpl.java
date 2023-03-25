@@ -4,7 +4,7 @@ import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Enum.PaymentMethodEnum;
 import com.hust.vitech.Model.*;
 import com.hust.vitech.Repository.*;
-import com.hust.vitech.Repository.Interface.CountOrderInteface;
+import com.hust.vitech.Repository.Interface.CountOrderInterface;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Response.CountOrderResponse;
 import com.hust.vitech.Service.OrderService;
@@ -149,11 +149,6 @@ public class OrderServiceImpl implements OrderService {
                     productRepository.save(product);
                 });
 
-
-                order.setInvoiceSymbol("1C22THN");
-                order.setTaxNumber("5372756200-722");
-                order.setTaxAuthoritiesCode("008B2B4F96C27C41F0BEB38CC14790AAB9");
-
                 message = "Giao hàng thành công";
             }
             case CANCEL -> {
@@ -223,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<Order> getAllOrders(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         return orderRepository.findAll(pageable);
     }
 
@@ -278,15 +273,18 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> statisticSuccessOrderAndOrderDateBetween(LocalDate startDate, LocalDate endDate, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("orderDate"));
         List<Order> orders = orderRepository.statisticSuccessOrderAndOrderDateBetween(startDate, endDate);
-        return new PageImpl<>(orders, pageable, orders.size());
+        int startIndex = pageable.getPageNumber() * pageable.getPageSize();
+        int endIndex = Math.min(startIndex + pageable.getPageSize(), orders.size());
+
+        return new PageImpl<>(orders.subList(startIndex, endIndex), pageable, orders.size());
     }
 
     @Override
     public List<CountOrderResponse> statisticCountOrder() {
-        List<CountOrderInteface> countOrderResponses = orderRepository.statisticCountOrder();
+        List<CountOrderInterface> countOrderResponses = orderRepository.statisticCountOrder();
         List<CountOrderResponse> countOrderResponseList = new ArrayList<>();
 
-        for (CountOrderInteface co : countOrderResponses) {
+        for (CountOrderInterface co : countOrderResponses) {
             countOrderResponseList.add(new CountOrderResponse(co.getStatus(), co.getQuantity(), co.getTotalAll()));
         }
 
@@ -294,7 +292,7 @@ public class OrderServiceImpl implements OrderService {
             var c = countOrderResponses.stream().filter(item -> item.getStatus() == od).findFirst();
 
             if (c.isEmpty()) {
-                countOrderResponseList.add( new CountOrderResponse(od, 0, 0));
+                countOrderResponseList.add(new CountOrderResponse(od, 0, 0));
             }
         }
 
@@ -308,6 +306,4 @@ public class OrderServiceImpl implements OrderService {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         return sb.toString();
     }
-
-
 }

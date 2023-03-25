@@ -3,7 +3,7 @@ package com.hust.vitech.Repository;
 import com.hust.vitech.Enum.OrderStatusEnum;
 import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.Order;
-import com.hust.vitech.Repository.Interface.CountOrderInteface;
+import com.hust.vitech.Repository.Interface.CountOrderInterface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,5 +27,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> statisticSuccessOrderAndOrderDateBetween(LocalDate startDate, LocalDate endDate);
 
     @Query(value = "select status, count(*) as quantity, sum(total) as totalAll from orders group by status order by status ASC", nativeQuery = true)
-    List<CountOrderInteface> statisticCountOrder();
+    List<CountOrderInterface> statisticCountOrder();
 }

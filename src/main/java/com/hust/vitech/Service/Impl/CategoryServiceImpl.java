@@ -1,5 +1,8 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Constants.ErrorCode;
+import com.hust.vitech.Exception.ApiException;
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Category;
 import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Request.CategoryRequest;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(Long id, CategoryRequest categoryRequest) {
+    public Category updateCategory(Long id, CategoryRequest categoryRequest) throws CustomException {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_EXIST));
 
         category.setName(categoryRequest.getName());
         category.setDescription(categoryRequest.getDescription());
@@ -42,8 +46,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<?> deleteCategory(Long id) {
-        return categoryRepository.findById(id).map(
+    public void deleteCategory(Long id) {
+        categoryRepository.findById(id).map(
                 category -> {
                     categoryRepository.delete(category);
                     return ResponseEntity.ok().build();
@@ -52,8 +56,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+    public Category getCategoryById(Long id) throws CustomException {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_EXIST));
     }
 
     @Override

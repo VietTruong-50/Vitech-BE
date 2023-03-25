@@ -1,5 +1,7 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Constants.ErrorCode;
+import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Slider;
 import com.hust.vitech.Repository.SliderRepository;
 import com.hust.vitech.Request.SliderRequest;
@@ -19,7 +21,6 @@ public class SliderServiceImpl implements SliderService {
     @Autowired
     private SliderRepository sliderRepository;
 
-
     @Override
     public Slider createNewSlider(SliderRequest sliderRequest) {
         if(!sliderRepository.existsByName(sliderRequest.getName())){
@@ -30,16 +31,16 @@ public class SliderServiceImpl implements SliderService {
     }
 
     @Override
-    public Slider updateSlider(Long id, SliderRequest sliderRequest) {
+    public Slider updateSlider(Long id, SliderRequest sliderRequest) throws CustomException {
         Slider slider = sliderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Slider not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.SLIDER_NOT_EXIST));
         return sliderRepository.save(sliderRequest.toSlider(slider));
     }
 
     @Override
-    public void deleteSlider(Long id) {
+    public void deleteSlider(Long id) throws CustomException {
         Slider slider = sliderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Slider not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.SLIDER_NOT_EXIST));
         sliderRepository.delete(slider);
     }
 

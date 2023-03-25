@@ -18,11 +18,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String invoiceSymbol;
+    private String invoiceSymbol = "1C22THN";
 
-    private String taxNumber;
+    private String taxNumber = "5372756200-722";
 
-    private String taxAuthoritiesCode;
+    private String taxAuthoritiesCode = "008B2B4F96C27C41F0BEB38CC14790AAB9";
 
     private String orderCode;
 

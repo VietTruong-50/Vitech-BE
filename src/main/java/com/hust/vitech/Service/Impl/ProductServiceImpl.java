@@ -1,13 +1,14 @@
 package com.hust.vitech.Service.Impl;
 
+import com.hust.vitech.Constants.ErrorCode;
 import com.hust.vitech.Exception.CustomException;
 import com.hust.vitech.Model.Category;
 import com.hust.vitech.Model.ImageModel;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.SubCategory;
-import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Repository.CategoryRepository;
 import com.hust.vitech.Repository.ProductRepository;
+import com.hust.vitech.Repository.SubCategoryRepository;
 import com.hust.vitech.Request.ProductRequest;
 import com.hust.vitech.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,37 +28,37 @@ import java.util.*;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    @PersistenceContext
+    EntityManager entityManager;
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
     @Override
     public Product createNewProduct(ProductRequest productRequest) throws CustomException {
 
-            Product product = new Product();
+        Product product = new Product();
 
         if (productRequest.getCategoryId() != null) {
             product.setCategory(
                     categoryRepository.findById(productRequest.getCategoryId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+                            .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_EXIST)));
         }
 
         if (productRequest.getSubCategoryId() != null) {
             product.setSubCategory(
                     subCategoryRepository.findById(productRequest.getSubCategoryId())
-                            .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
+                            .orElseThrow(() -> new CustomException(ErrorCode.SUB_CATEGORY_NOT_EXIST)));
         }
 
-            return productRepository.save(productRequest.toProduct(product));
+        return productRepository.save(productRequest.toProduct(product));
     }
 
     @Override
-    public Product updateProduct(ProductRequest productRequest, Long productId) {
+    public Product updateProduct(ProductRequest productRequest, Long productId) throws CustomException {
         Product product = this.findProductById(productId);
 
         if (product != null) {
@@ -65,13 +66,13 @@ public class ProductServiceImpl implements ProductService {
             if (productRequest.getCategoryId() != null) {
                 product.setCategory(
                         categoryRepository.findById(productRequest.getCategoryId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+                                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_EXIST)));
             }
 
             if (productRequest.getSubCategoryId() != null) {
                 product.setSubCategory(
                         subCategoryRepository.findById(productRequest.getSubCategoryId())
-                                .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found")));
+                                .orElseThrow(() -> new CustomException(ErrorCode.SUB_CATEGORY_NOT_EXIST)));
             }
 
             return productRepository.save(productRequest.toProduct(product));
@@ -80,18 +81,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long id) {
+    public void deleteProduct(Long id) throws CustomException {
         productRepository.findById(id).map(
                 product -> {
                     productRepository.delete(product);
                     return ResponseEntity.ok().build();
                 }
-        ).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        ).orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_EXIST));
     }
 
     @Override
-    public Product findProductById(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    public Product findProductById(Long id) throws CustomException {
+        return productRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_EXIST));
     }
 
     @Override
@@ -120,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findTop10ProductsBySubCateName(String brandName) {
         List<Product> products = productRepository.findTop10BySubCategory_SubCateNameContaining(brandName);
 
-        if(products.size() < 10){
+        if (products.size() < 10) {
 
         }
         return products;
@@ -145,9 +146,6 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return productRepository.findAllBySubCategory_SubCateName(pageable, brandName);
     }
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     public Page<Product> filterProduct(List<String> categories,
@@ -200,7 +198,10 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-        return new PageImpl<>(result, pageable, result.size());
+        int startIndex = pageable.getPageNumber() * pageable.getPageSize();
+        int endIndex = Math.min(startIndex + pageable.getPageSize(), result.size());
+
+        return new PageImpl<>(result.subList(startIndex, endIndex), pageable, result.size());
     }
 
     @Override

@@ -52,7 +52,7 @@ public class ProductController {
     public ApiResponse<Product> updateProduct(@PathVariable("id") Long productId,
                                               @RequestPart("product") ProductRequest productRequest,
                                               @RequestPart("featureImage") MultipartFile featureImage,
-                                              @RequestPart("imageFiles") MultipartFile[] files) {
+                                              @RequestPart("imageFiles") MultipartFile[] files) throws CustomException{
         try {
             productRequest.setProductImages(productService.uploadImages(files));
             productRequest.setFeatureImageName(featureImage.getOriginalFilename());
@@ -76,8 +76,8 @@ public class ProductController {
     public ApiResponse<Product> findProductById(@PathVariable("id") Long productId) {
         try {
             return ApiResponse.successWithResult(productService.findProductById(productId));
-        } catch (ResourceNotFoundException e) {
-            return ApiResponse.failureWithCode("", "Not found", null, HttpStatus.NOT_FOUND);
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -111,9 +111,9 @@ public class ProductController {
     }
 
     @DeleteMapping(value = "/products/{id}", produces = "application/json")
-    public ApiResponse<?> deleteProduct(@PathVariable("id") Long id) {
+    public ApiResponse<?> deleteProduct(@PathVariable("id") Long id) throws CustomException {
         productService.deleteProduct(id);
-        return ApiResponse.successWithResult(null, "Delete success");
+        return ApiResponse.successWithResult(null, "Delete product success");
     }
 
     @GetMapping(value = "/products/productCode/{productCode}", produces = "application/json")

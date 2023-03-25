@@ -5,6 +5,7 @@ import com.hust.vitech.Model.Customer;
 import com.hust.vitech.Model.Order;
 import com.hust.vitech.Model.Product;
 import com.hust.vitech.Model.User;
+import com.hust.vitech.Repository.Interface.ProductTopSellerInterface;
 import com.hust.vitech.Request.OrderRequest;
 import com.hust.vitech.Request.UserRequest;
 import com.hust.vitech.Response.ApiResponse;
@@ -133,8 +134,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/top5seller", produces = "application/json")
-    public ApiResponse<List<Product>> getTop5Seller(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate){
+    public ApiResponse<List<ProductTopSellerInterface>> getTop5Seller(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate){
         return ApiResponse.successWithResult(userService.getTop5Seller(startDate, endDate));
     }
 }
